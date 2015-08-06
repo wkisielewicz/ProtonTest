@@ -28,9 +28,10 @@ describe 'Backup Firebird', :type => :feature, :js => true do
     #page.driver.render('./firebird_restore.png', :full => true)
     #page.driver.render('./firebird_restore.png', :full => true)
     page.find('div.col-sm-7 > button.btn-primary.btn').click
+    attach_file('seleniumUpload', Rails.root + './fixturies/files/plik-ratunkowy.prcv')
 
-    page.uploadFile('input[name=file]', 'C:\Users\kisiel\Desktop\key\plik-ratunkowy.prcv')
-    page.render('plik-ratunkowy.prcv')
+   #page.uploadFile('input[name=file]', 'C:\Users\kisiel\Desktop\key\plik-ratunkowy.prcv')
+    #page.render('plik-ratunkowy.prcv')
     #page.find('#file').fill_in('C:\Users\kisiel\Desktop\key\plik-ratunkowy.prcv')
     #page.find('#file').click
     #fill_in :name =>'file',  :with => 'C:\Users\kisiel\Desktop\key\plik-ratunkowy.prcv'

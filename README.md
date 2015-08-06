@@ -1,2 +1,2 @@
 # ProtonTest
-Tests for Proton Red
+Automate tests for Proton Red

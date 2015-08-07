@@ -1,5 +1,4 @@
 #require 'rspec'
-require '../copy_firebird'
 require_relative 'spec_helper'
 require 'capybara/rspec'
 require 'capybara/poltergeist'

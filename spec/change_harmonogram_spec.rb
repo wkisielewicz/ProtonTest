@@ -15,7 +15,7 @@ describe 'change harmonogram', :type => :feature, :js => true do
       fill_in 'config-schedule-start-at',   :with => '15:00'
       page.find('div.col-sm-7 > button.btn-primary.btn').click
       #expect(page).to have_content 'Success'
-    page.driver.render('./screenshot/file.png', :full => true)
+    page.driver.render('./screenshot/harmonogram.png', :full => true)
     end
   end
 

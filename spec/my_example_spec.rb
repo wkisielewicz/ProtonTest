@@ -11,6 +11,6 @@ describe 'some stuff which requires js', :type => :feature, :js => true do
   #include Capybara::DSL
   it 'will take a screenshot' do
     visit('http://google.com')
-    page.driver.render('./file.png', :full => true)
+    page.driver.render('./screenshot/example.png', :full => true)
   end
 end

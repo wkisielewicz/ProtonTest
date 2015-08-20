@@ -1,26 +1,27 @@
 require 'rubygems'
 require 'net/ssh'
+require 'net/scp'
 require 'ostruct'
 require 'drb/drb'
 
-MACHINES = [{vm: 'Win8.1',
-             initial_snapshot: 'test_firebird_2_0',
-             hostname: '10.26.14.19',
-             username: 'IEUser',
-             password: 'Passw0rd!',
-             install_dir: 'home/IEUser/ProtonTest/bin'},
+MACHINES = [
+    # {vm: 'Win8.1',
+    #          initial_snapshot: 'test_firebird_2_0',
+    #          hostname: '10.26.14.19',
+    #          username: 'IEUser',
+    #          password: 'Passw0rd!'},
             {vm: 'Win7',
              initial_snapshot: 'test_firebird_2_0_server',
              hostname: '10.26.14.20',
              username: 'IEUser',
-             password: 'Passw0rd!',
-             install_dir: 'home/IEUser/ProtonTest/bin'}]
+             password: 'Passw0rd!'}]
 
 MOTHER = {hostname: '10.26.14.13',
           username: 'kisiel',
           password: 'qE2y2Uc9Gz'}
 
-class VM < OpenStruct
+# A remote machine.
+class RemoteMachine < OpenStruct
   def ssh!(cmd)
     puts "[#{self.hostname}] #{cmd}"
     Net::SSH.start(self.hostname, self.username, :password => self.password) do |ssh|
@@ -28,9 +29,18 @@ class VM < OpenStruct
       puts res # TODO: Raise exception on failure
     end
   end
+
+  def scp!(source_path, target_path)
+    puts "[#{self.hostname}] scp #{source_path} #{target_path}"
+    Net::SCP.start(self.hostname, self.username, :password => self.password) do |scp|
+      # synchronous (blocking) upload; call blocks until upload completes
+      scp.upload! source_path, target_path
+    end
+  end
 end
 
-class TestMachine < VM
+# Virtual machine with clean environment for tests restored from a VB snapshot.
+class TestMachine < RemoteMachine
   def initialize(mother, config)
     @mother = mother
     super(config)
@@ -39,7 +49,10 @@ class TestMachine < VM
   def setup!
     clear
     start
-    install_proton
+  end
+
+  def stop!
+    # TODO: Stop vm.
   end
 
   protected
@@ -52,31 +65,36 @@ class TestMachine < VM
   def start
     @mother.ssh!("VBoxManage startvm #{self.vm}")
   end
-
-  def install_proton
-    # TODO: Scp proton installation exec.
-    self.ssh!("cd #{self.install_dir} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
-  end
-
-  ####load server###
-  def server_load
-   sp
-  end
 end
 
-test_machines = MACHINES.map {|config| TestMachine.new(VM.new(MOTHER), config)}
-test_machines[1].setup!
-
+# A suite of tests to run on a remote test machine.
 class RemoteTestSuite
+  REMOTE_UPLOAD_DIR = '/tmp/'
+
   def initialize(test_machine)
     @vm = test_machine
   end
+
   def run!
     @vm.setup!
+    scp_proton
+    install_proton
     run_all_tests
+  ensure
+    @vm.stop!
   end
 
-  protected
+  # protected
+
+  def scp_proton
+    project_root = Pathname.new(__FILE__).dirname.dirname
+    install_path = File.join(project_root, 'install', 'Proton+Red+Setup.exe')
+    @vm.scp! install_path, "#{REMOTE_UPLOAD_DIR}"
+  end
+
+  def install_proton
+    @vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
+  end
 
   def run_all_tests
     DRb.start_service
@@ -86,6 +104,11 @@ class RemoteTestSuite
     # TODO: Stop DRb service?
   end
 end
+
+
+test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config) }
+test = RemoteTestSuite.new(test_machines[0])
+test.run!
 
 exit
 #restore and run snapshot from host machine (Win8.1, Win8, Vista, Win7, Win server2012, Win server2008)

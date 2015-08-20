@@ -1,4 +1,5 @@
 require 'drb/drb'
+require 'pathname'
 
 # The URI for the server to connect to
 
@@ -9,12 +10,9 @@ URI = 'druby://0.0.0.0:8787'
 class TestServer
 
   def initialize
-    @url = 'git@github.com:wkisielewicz/ProtonTest.git'
-    @revision = 'master'
-  end
-
-  def git_clone
-    system("git clone #{@url}")
+    @branch = 'master'
+    project_root = Pathname.new(__FILE__).dirname.dirname
+    Dir.chdir(project_root)
   end
 
   def git_reset
@@ -23,11 +21,11 @@ class TestServer
   end
 
   def target_revision
-    system("rev-parse #{@revision}")
+    system("rev-parse #{@branch}")
   end
 
   def run_tests
-    ref=system('cd ProtonTest/spec && rspec backup_firebird_spec.rb')
+    ref = system('rspec spec/backup_firebird_spec.rb')
     puts ref
   end
 
@@ -42,26 +40,18 @@ class TestServer
     else
       puts "OK "
     end
-
-
-
   end
 
-#private
-   def git_tests
-     git_clone
-     git_reset
-     target_revision
-     run_tests
-     control_snapshot
-
-     #git clone your-repo tmp && mv tmp/.git . && rm -rf tmp && git reset --hard
+  def git_tests
+    git_reset
+    run_tests
+    control_snapshot
   end
 end
 
 FRONT_OBJECT=TestServer.new
 
-$SAFE = 1   # disable eval() and friends --security
+$SAFE = 1 # disable eval() and friends --security
 
 DRb.start_service(URI, FRONT_OBJECT)
 

@@ -4,7 +4,7 @@ require 'pathname'
 # The URI for the server to connect to
 
 
-URI = 'druby://0.0.0.0:8787'
+URI = 'druby://0.0.0.0:8989'
 
 ######## Git and run tests #####################
 class TestServer

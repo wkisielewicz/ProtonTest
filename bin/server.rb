@@ -25,7 +25,7 @@ class TestServer
   end
 
   def run_tests
-    ref = system('rspec spec/backup_firebird_spec.rb')
+    ref = system('rspec spec/my_example_spec.rb')
     puts ref
   end
 

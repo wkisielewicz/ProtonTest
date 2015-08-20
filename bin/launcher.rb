@@ -80,7 +80,7 @@ class RemoteTestSuite
 
   def run_all_tests
     DRb.start_service
-    tr = DRbObject.new_with_uri("druby://@vm.hostname:8787")
+    tr = DRbObject.new_with_uri("druby://#{@vm.hostname}:8989")
     puts tr.git_tests
   ensure
     # TODO: Stop DRb service?

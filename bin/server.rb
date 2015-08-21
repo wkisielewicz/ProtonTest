@@ -31,29 +31,21 @@ class TestServer
 
   ####### snapshot when exit code =! 0 or true ######
 
+
+
  # def control_snapshot
-  #TODO: Snapshot when exit status !=0
-  def control_snapshot
-    if $?.exitstatus != 0
-      system("VBoxManage snapshot #{self.vm} take #{self.initial_snapshot}.Testowy --description Snapshot")
-    else
-      puts "OK "
-    end
- end
+  #  if $?.exitstatus != 0
+  #    system("VBoxManage snapshot #{self.vm} take #{self.initial_snapshot}.Testowy --description Snapshot")
+ #   else
+  #    puts "OK "
+  #  end
+ #end
 
-#  if $?.exitstatus != 0
-#   puts "OMG FAIL :)"
-#system()
-
-# else
-#   puts "OK "
-# end
-# end
 
   def git_tests
     git_reset
     run_tests
-    control_snapshot
+
 
   end
 end

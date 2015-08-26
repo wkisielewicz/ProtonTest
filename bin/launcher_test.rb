@@ -85,15 +85,24 @@ class TestMachine < RemoteMachine
 
   def clear
     # TODO: Stop if vm is running.
-    output = @mother.ssh!("VBoxmanage list runningvms")
+    begin
+    raise output = @mother.ssh!("VBoxmanage list runningvms")
     if output !=0
     @mother.ssh!("VBoxManage controlvm #{self.vm} poweroff")
     end
-    @mother.ssh!("VBoxManage snapshot #{self.vm} restore #{self.initial_snapshot}")
-  end
+    raise @mother.ssh!("VBoxManage snapshot #{self.vm} restore #{self.initial_snapshot}")
+    rescue Exception => e
+     puts e.message
+    end
+ end
 
   def start
-    @mother.ssh!("VBoxManage startvm #{self.vm}")
+    begin
+    raise @mother.ssh!("VBoxManage startvm #{self.vm}")
+    rescue Exception => e
+      puts e.message
+      #puts e.backtrace.inspect
+    end
   end
 end
 
@@ -122,7 +131,7 @@ class RemoteTestSuite
  #   install_path = File.join(project_root, 'install', 'Proton+Red+Setup.exe')
  #   @vm.scp! install_path, "#{REMOTE_UPLOAD_DIR}"
  #  end
-
+#@mother.ssh!("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
   def install_proton
     @vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
   end
@@ -133,25 +142,27 @@ class RemoteTestSuite
 
     obj.git_reset do
       system('git fetch --all') && system("git reset --hard #{target_revision}")
-      # zmien potem sciezke
+      #zmien sciezke na 'rspec spec/my_example_spec.rb'
       obj.run_tests
-      system('rspec ProtonTest/spec/backup_firebird_spec.rb')
+      test=system('rspec ProtonTest/spec/my_example_spec.rb')
+      puts "[server] status tests: #{test}"
 
       obj.control_snapshot
 
       if $?.exitstatus != 0
-        puts "Tests failed"
-        fail_test = @mother.ssh!("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test failure --description control snapshot ")
-        puts fail_test
+        puts "[server]Tests failure, I do snapshot"
+        system(@mother.ssh!"VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
+
       else
-        puts "Tests passed"
+        puts "[server] Tests passed, snapshot is unnecessary"
       end
     end
 
 
-    puts "Wait moment Im doing my job"
+    puts "[server] Wait moment Im doing my job"
     gets
-    #puts tr.git_tests
+
+
   ensure
     # TODO: Stop DRb service?
     DRb.stop_service

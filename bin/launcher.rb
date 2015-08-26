@@ -10,11 +10,11 @@ MACHINES = [
     #          hostname: '10.26.14.19',
     #          username: 'IEUser',
     #          password: 'Passw0rd!'},
-            {vm: 'Win7',
-             initial_snapshot: 'test_firebird_2_0_server',
-             hostname: '10.26.14.20',
-             username: 'IEUser',
-             password: 'Passw0rd!'}]
+    {vm: 'Win7',
+     initial_snapshot: 'test_firebird_2_0_server',
+     hostname: '10.26.14.20',
+     username: 'IEUser',
+     password: 'Passw0rd!'}]
 
 MOTHER = {hostname: '10.26.14.13',
           username: 'kisiel',
@@ -116,7 +116,6 @@ exit
 hostname = '10.26.14.13'
 username = 'kisiel'
 password = 'qE2y2Uc9Gz'
-
 Net::SSH.start(hostname, username, :password => password) do |ssh|
   res = ssh.exec!('VBoxManage snapshot Win8.1firebird restore test_firebird_2_0
 		               VBoxManage startvm Win8.1firebird
@@ -132,60 +131,43 @@ Net::SSH.start(hostname, username, :password => password) do |ssh|
                    VBoxManage startvm WinServerFirebird2008')
   puts res
 end
-
 # call for all machines the user name IEUser
 # install node and run tests in machine IEUser
 # copy client.rb to my path
 # run client file
-
 hosts =['10.26.14.17', '10.26.14.20', '10.26.14.21', '10.26.14.19']
 username ='IEUser'
 password ='Passw0rd!'
-
 hosts.each do |host|
   Net::SSH.start(host, username, :password => password) do |ssh|
     res = ssh.exec!('cd home/IEUser/ProtonTest/bin
                      ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT')
-
     puts res
   end
-
 # connect windows server 2012
 # install node and run tests in machine IEUser
 # copy client.rb to my path
 # run client file
-
   hostname= '10.26.14.14'
   username ='winserver'
   password ='Passw0rd!'
-
   Net::SSH.start(hostname, username, :password => password) do |ssh|
     res = ssh.exec!('cd home/winserver/ProtonTest/bin
                    ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT')
-
     puts res
-
   end
-
 # connect windows server 2008
 # install node and run tests in machine IEUser
 # copy client.rb to my path
 # run client file
-
   hostname= '10.26.14.18'
   username ='cyg_server'
   password ='Passw0rd!'
-
   Net::SSH.start(hostname, username, :password => password) do |ssh|
     res = ssh.exec!('cd home/cyg_server/ProtonTest/bin
                    ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT')
-
     puts res
   end
 end
 =end
-		
-
-
-
 

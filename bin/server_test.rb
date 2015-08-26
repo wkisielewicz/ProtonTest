@@ -2,7 +2,7 @@ require 'drb'
 require 'pathname'
 
 
-URI = 'druby://localhost:8989'
+URI = 'druby://0.0.0.0:8989'
 $callback = nil
 
 class TestServer

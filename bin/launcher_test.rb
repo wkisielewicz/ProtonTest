@@ -11,12 +11,14 @@ MACHINES = [
     #          username: 'IEUser',
     #          password: 'Passw0rd!'},
             {vm: 'Win7',
-             initial_snapshot: 'test_firebird_2_0_server',
-             hostname: '10.26.14.20',
+             initial_snapshot: 'server_test',
+             hostname: '192.168.0.111',
+             #hostname: '10.26.14.20',
              username: 'IEUser',
              password: 'Passw0rd!'}]
 
-MOTHER = {hostname: '10.26.14.13',
+MOTHER = {#hostname: '10.26.14.13',
+          hostname: '192.168.0.101',
           username: 'kisiel',
           password: 'qE2y2Uc9Gz'}
 
@@ -24,21 +26,26 @@ MOTHER = {hostname: '10.26.14.13',
 class RemoteMachine < OpenStruct
 
 
+  # def ssh!(cmd)
+  #
+  #   puts "[#{self.hostname}] #{cmd}"
+  #   Net::SSH.start(self.hostname, self.username, :password => self.password) do |ssh|
+  #     res = ssh.exec!(cmd)
+  #     puts res # TODO: Raise exception on failure
+  #   end
+  # end
+
   def ssh!(cmd)
     begin
     puts "[#{self.hostname}] #{cmd}"
 
-      result = {}
-
-      Timeout::timeout(3) do
+     Timeout::timeout(180) do
       begin
 
     Net::SSH.start(self.hostname, self.username, :password => self.password) do |ssh|
-      #results = ssh.exec!(cmd)
-     # puts results # TODO: Raise exception on failure
-      cmd.each { |cmd|
-        result[cmd] = ssh.exec!(cmd)
-      }
+      results = ssh.exec!(cmd)
+      puts results # TODO: Raise exception on failure
+
     end
       rescue Net::SSH::HostKeyMismatch => e
         e.remember_host!
@@ -47,8 +54,6 @@ class RemoteMachine < OpenStruct
         return e.to_s
       end
      end
-
-    return result
 
     rescue Timeout::Error
       return "Connection timed out"
@@ -76,32 +81,36 @@ class TestMachine < RemoteMachine
     start
   end
 
-  def stop!
-    # TODO: Stop vm.
-    @mother.ssh!("VBoxManage controlvm #{self.vm} poweroff")
-  end
+  # def stop!
+  #   # TODO: Stop vm.
+  #   begin
+  #   raise @mother.ssh!("VBoxManage controlvm #{self.vm} poweroff")
+  #   rescue Exception => e
+  #   puts e.message
+  #   puts e.backtrace.inspect
+  #   end
+  # end
 
   protected
 
   def clear
     # TODO: Stop if vm is running.
-    begin
-    raise output = @mother.ssh!("VBoxmanage list runningvms")
+    #@mother.ssh!("VBoxManage list runningvms")
+    output = @mother.ssh!("VBoxManage list runningvms")
     if output !=0
     @mother.ssh!("VBoxManage controlvm #{self.vm} poweroff")
     end
-    raise @mother.ssh!("VBoxManage snapshot #{self.vm} restore #{self.initial_snapshot}")
-    rescue Exception => e
-     puts e.message
+    @mother.ssh!("VBoxManage snapshot #{self.vm} restore #{self.initial_snapshot}")
+
     end
- end
+
 
   def start
-    begin
+   begin
     raise @mother.ssh!("VBoxManage startvm #{self.vm}")
     rescue Exception => e
-      puts e.message
-      #puts e.backtrace.inspect
+    puts e.message
+    puts e.backtrace.inspect
     end
   end
 end
@@ -109,7 +118,7 @@ end
 # A suite of tests to run on a remote test machine.
 class RemoteTestSuite
   #REMOTE_UPLOAD_DIR = '/tmp/'
-  REMOTE_UPLOAD_DIR = '//vboxsrv/test'
+  REMOTE_UPLOAD_DIR = '//vboxsrv/test/'
 
   def initialize(test_machine)
     @vm = test_machine
@@ -118,7 +127,9 @@ class RemoteTestSuite
   def run!
     @vm.setup!
     #scp_proton
+    sleep 6
     install_proton
+    sleep 6
     run_all_tests
   ensure
     @vm.stop!
@@ -133,10 +144,18 @@ class RemoteTestSuite
  #  end
 #@mother.ssh!("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
   def install_proton
-    @vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
+    begin
+      raise @vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
+    rescue Exception => e
+      puts e.message
+      puts e.backtrace.inspect
+    end
+  ensure
+    @vm.stop!
   end
 
   def run_all_tests
+
     DRb.start_service()
     obj = DRbObject.new_with_uri("druby://#{@vm.hostname}:8989")
 
@@ -151,7 +170,7 @@ class RemoteTestSuite
 
       if $?.exitstatus != 0
         puts "[server]Tests failure, I do snapshot"
-        system(@mother.ssh!"VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
+        #system("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
 
       else
         puts "[server] Tests passed, snapshot is unnecessary"
@@ -159,7 +178,7 @@ class RemoteTestSuite
     end
 
 
-    puts "[server] Wait moment Im doing my job"
+    puts "[server] Wait moment I doing my job"
     gets
 
 

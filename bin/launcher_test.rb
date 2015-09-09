@@ -27,19 +27,19 @@ MOTHER = {#hostname: '10.26.14.13',
 class RemoteMachine < OpenStruct
   def ssh!(cmd, timeout = 180)
     puts "[#{self.hostname}] #{cmd}"
-    Timeout::timeout(timeout) do
-      begin
-        Net::SSH.start(self.hostname, self.username, :password => self.password) do |ssh|
-          result = SshExec.ssh_exec!(ssh, cmd)
-          show_ssh_result(result)
-          raise "SSH command failed with code #{result.exit_status}" if result.exit_status != 0
-          result
-        end
-      rescue Net::SSH::HostKeyMismatch => e
-        e.remember_host!
-        retry
+    # Timeout::timeout(timeout) do
+    begin
+      Net::SSH.start(self.hostname, self.username, password: self.password, timeout: timeout) do |ssh|
+        result = SshExec.ssh_exec!(ssh, cmd)
+        show_ssh_result(result)
+        raise "SSH command failed with code #{result.exit_status}" if result.exit_status != 0
+        result
       end
+    rescue Net::SSH::HostKeyMismatch => e
+      e.remember_host!
+      retry
     end
+    # end
   end
 
   def show_ssh_result(result)
@@ -67,20 +67,15 @@ class TestMachine < RemoteMachine
 
   def setup!
     clear
-    start
+    start(wait: 120)
   end
 
   # def stop!
   #   # TODO: Stop vm.
-  #   begin
   #   raise @mother.ssh!("VBoxManage controlvm #{self.vm} poweroff")
-  #   rescue Exception => e
-  #   puts e.message
-  #   puts e.backtrace.inspect
-  #   end
   # end
 
-  protected
+  # protected
 
   def clear
     # TODO: Stop if vm is running (razem z Marcinem).
@@ -94,14 +89,30 @@ class TestMachine < RemoteMachine
   end
 
 
-  def start
-    begin
-      @mother.ssh!("VBoxManage startvm #{self.test_vm}")
-    rescue Exception => e
-      puts e.message
-      puts e.backtrace.inspect
-      raise
+  def start(options = {})
+    @mother.ssh!("VBoxManage startvm #{self.test_vm}")
+    wait = options[:wait].to_i
+    wait_for_ssh(wait) if wait > 0
+  end
+
+  def wait_for_ssh(wait)
+    Timeout::timeout(wait) do
+      while true
+        ignore_exceptions do
+          ssh!('echo', 1)
+          return
+        end
+      end
     end
+  rescue Timeout::Error
+    raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
+  rescue Errno::ETIMEDOUT
+    raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
+  end
+
+  def ignore_exceptions
+    yield
+  rescue
   end
 end
 
@@ -117,9 +128,7 @@ class RemoteTestSuite
   def run!
     @test_vm.setup!
     #scp_proton
-    sleep 6
     install_proton
-    sleep 6
     run_all_tests
   ensure
     @test_vm.stop!
@@ -134,12 +143,7 @@ class RemoteTestSuite
   #  end
   #@mother.ssh!("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
   def install_proton
-    begin
-      raise @test_vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
-    rescue Exception => e
-      puts e.message
-      puts e.backtrace.inspect
-    end
+    @test_vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
   ensure
     @test_vm.stop!
   end

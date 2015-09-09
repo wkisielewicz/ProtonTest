@@ -93,7 +93,7 @@ class TestMachine < RemoteMachine
   end
 
   def start(options = {})
-    @mother.ssh!("VBoxManage startvm #{self.test_vm}")
+    @mother.ssh!("VBoxManage startvm #{self.vm}")
     wait = options[:wait].to_i
     wait_for_ssh(wait) if wait > 0
   end
@@ -102,7 +102,7 @@ class TestMachine < RemoteMachine
     Timeout::timeout(wait) do
       while true
         ignore_exceptions do
-          ssh!('echo', 1)
+          ssh!('echo', 30)
           return
         end
       end
@@ -133,8 +133,6 @@ class RemoteTestSuite
     #scp_proton
     install_proton
     run_all_tests
-  ensure
-    @test_vm.stop!
   end
 
   # protected
@@ -147,17 +145,16 @@ class RemoteTestSuite
   #@mother.ssh!("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
   def install_proton
     @test_vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
-  ensure
-    @test_vm.stop!
   end
 
   def run_all_tests
 
     DRb.start_service()
     obj = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
-
+    obj.evaluate("system('ls')")
+    return
     obj.git_reset do
-      system("cat dddd")
+      system("ls")
       # system('git fetch --all') #&& system("git reset --hard #{target_revision}")
       # #zmien sciezke na 'rspec spec/my_example_spec.rb'
       # obj.run_tests
@@ -187,11 +184,11 @@ class RemoteTestSuite
 end
 
 
-# test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config) }
-# test = RemoteTestSuite.new(test_machines[0])
-# test.run!
+test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config) }
+test = RemoteTestSuite.new(test_machines[0])
+test.run!
 
-# exit
+exit
 #restore and run snapshot from host machine (Win8.1, Win8, Vista, Win7, Win server2012, Win server2008)
 =begin
 hostname = '10.26.14.13'

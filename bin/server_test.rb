@@ -13,6 +13,10 @@ class TestServer
     Dir.chdir(project_root)
   end
 
+  def evaluate(ruby_code)
+    eval(ruby_code)
+  end
+
   def git_reset(&reset)
     $callback = reset
   end

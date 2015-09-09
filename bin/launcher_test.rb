@@ -223,7 +223,7 @@ end
 # test = RemoteTestSuite.new(test_machines[0])
 # test.run!
 DRb.start_service()
-obj = DRbObject.new_with_uri("druby://localhost:8989")
+obj = DRbObject.new_with_uri("druby://192.168.0.111:8989")
 obj.upload(FileTransfer.new("install/Proton+Red+Setup.exe", "setup.exe"))
 exit
 #restore and run snapshot from host machine (Win8.1, Win8, Vista, Win7, Win server2012, Win server2008)

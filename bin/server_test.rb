@@ -24,7 +24,7 @@ class TestServer
 
   def upload(transfer)
     puts transfer.target_path
-    FileUtils.mkdir_p(File.dirname(transfer.target_path))
+    #FileUtils.mkdir_p(File.dirname(transfer.target_path))
     File.open(transfer.target_path, 'wb+') do |out|
       while (buf = transfer.read)
         puts "Read #{buf.size}"

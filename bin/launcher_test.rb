@@ -3,6 +3,7 @@ require 'net/ssh'
 require 'net/scp'
 require 'ostruct'
 require 'drb/drb'
+require 'ssh-exec'
 
 MACHINES = [
     # {vm: 'Win8.1',
@@ -29,31 +30,32 @@ class RemoteMachine < OpenStruct
     Timeout::timeout(timeout) do
       begin
         Net::SSH.start(self.hostname, self.username, :password => self.password) do |ssh|
-          results = ssh.exec!(cmd)
-          # result = SshExec.ssh_exec!(cmd)
-          # raise "SSH command failed with code #{result.exit_code}" if result.exit_code != 0
-          # puts result.stdout # TODO: Raise exception on failure
-          # puts result.stderr
-          puts results
+          result = SshExec.ssh_exec!(ssh, cmd)
+          raise "SSH command failed with code #{result.exit_status}" if result.exit_status != 0
+          show_ssh_result(result)
+          result
         end
       rescue Net::SSH::HostKeyMismatch => e
         e.remember_host!
         retry
-      # rescue Exception => e
-      #   puts "Error in ssh!: #{e}"
-      #   puts e.backtrace
-      #   raise e
       end
     end
   end
 
-  #  def scp!(source_path, target_path)
-  #    puts "[#{self.hostname}] scp #{source_path} #{target_path}"
-  #    Net::SCP.start(self.hostname, self.username, :password => self.password) do |scp|
-  #      # synchronous (blocking) upload; call blocks until upload completes
-  #      scp.upload! source_path, target_path
-  #    end
-  #  end
+  def show_ssh_result(result)
+    stdout_prefix = "==>"
+    stderr_prefix = "1=>"
+    puts result.stdout.split("\n").map { |line| "#{stdout_prefix} #{line}" }.join("\n") unless result.stdout.strip.empty?
+    puts result.stderr.split("\n").map { |line| "#{stderr_prefix} #{line}" }.join("\n") unless result.stderr.strip.empty?
+  end
+
+#  def scp!(source_path, target_path)
+#    puts "[#{self.hostname}] scp #{source_path} #{target_path}"
+#    Net::SCP.start(self.hostname, self.username, :password => self.password) do |scp|
+#      # synchronous (blocking) upload; call blocks until upload completes
+#      scp.upload! source_path, target_path
+#    end
+#  end
 end
 
 # Virtual machine with clean environment for tests restored from a VB snapshot.
@@ -85,7 +87,7 @@ class TestMachine < RemoteMachine
     #@mother.ssh!("VBoxManage list runningvms")
     # output = @mother.ssh!("VBoxManage list runningvms")
     # if output !=0
-    @mother.ssh!("VBoxManage controlvm #{self.vm} poweroff")
+    @mother.ssh!("VBoxManage controlvm #{self.test_vm} poweroff")
     # end
     @mother.ssh!("VBoxManage snapshot #{self.vm} restore #{self.initial_snapshot}")
 
@@ -94,7 +96,7 @@ class TestMachine < RemoteMachine
 
   def start
     begin
-      @mother.ssh!("VBoxManage startvm #{self.vm}")
+      @mother.ssh!("VBoxManage startvm #{self.test_vm}")
     rescue Exception => e
       puts e.message
       puts e.backtrace.inspect
@@ -109,18 +111,18 @@ class RemoteTestSuite
   REMOTE_UPLOAD_DIR = '//vboxsrv/test/'
 
   def initialize(test_machine)
-    @vm = test_machine
+    @test_vm = test_machine
   end
 
   def run!
-    @vm.setup!
+    @test_vm.setup!
     #scp_proton
     sleep 6
     install_proton
     sleep 6
     run_all_tests
   ensure
-    @vm.stop!
+    @test_vm.stop!
   end
 
   # protected
@@ -128,24 +130,24 @@ class RemoteTestSuite
   # def scp_proton
   #   project_root = Pathname.new(__FILE__).dirname.dirname
   #   install_path = File.join(project_root, 'install', 'Proton+Red+Setup.exe')
-  #   @vm.scp! install_path, "#{REMOTE_UPLOAD_DIR}"
+  #   @test_vm.scp! install_path, "#{REMOTE_UPLOAD_DIR}"
   #  end
   #@mother.ssh!("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
   def install_proton
     begin
-      raise @vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
+      raise @test_vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
     rescue Exception => e
       puts e.message
       puts e.backtrace.inspect
     end
   ensure
-    @vm.stop!
+    @test_vm.stop!
   end
 
   def run_all_tests
 
     DRb.start_service()
-    obj = DRbObject.new_with_uri("druby://#{@vm.hostname}:8989")
+    obj = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
 
     obj.git_reset do
       system("cat dddd")
@@ -178,11 +180,11 @@ class RemoteTestSuite
 end
 
 
-test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config) }
-test = RemoteTestSuite.new(test_machines[0])
-test.run!
+# test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config) }
+# test = RemoteTestSuite.new(test_machines[0])
+# test.run!
 
-exit
+# exit
 #restore and run snapshot from host machine (Win8.1, Win8, Vista, Win7, Win server2012, Win server2008)
 =begin
 hostname = '10.26.14.13'

@@ -72,16 +72,16 @@ class RemoteTestSuite
   REMOTE_UPLOAD_DIR = '/tmp/'
 
   def initialize(test_machine)
-    @vm = test_machine
+    @test_vm = test_machine
   end
 
   def run!
-    @vm.setup!
+    @test_vm.setup!
     scp_proton
     install_proton
     run_all_tests
   ensure
-    @vm.stop!
+    @test_vm.stop!
   end
 
   # protected
@@ -93,12 +93,12 @@ class RemoteTestSuite
   end
 
   def install_proton
-    @vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
+    @test_vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
   end
 
   def run_all_tests
     DRb.start_service
-    tr = DRbObject.new_with_uri("druby://#{@vm.hostname}:8989")
+    tr = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
     puts tr.git_tests
   ensure
     # TODO: Stop DRb service?

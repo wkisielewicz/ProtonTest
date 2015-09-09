@@ -147,30 +147,47 @@ class RemoteTestSuite
     @test_vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
   end
 
+  # Main TODO
+  # - Benchmark upload of large files.
+  # - Copy spec/ dir to server to avoid having to use git.
+  # - Run spec on server using #exec.
+  # - Rewrite install_proton using #exec.
+  # - Use #upload to copy setup to avoid shared folders.
+  # - Refactor code (w/ upierdliwy Marcin).
+
   def run_all_tests
 
     DRb.start_service()
-    obj = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
-    obj.exec('dir')
+    server = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
+
+
+    # Copy specs using upload.
+    # Dir.glob('../spec/**/*') do |path|
+    #   server.upload(FileTransfer.new(path, ....?))
+    # end
+    # # Run specs using exec
+    # server.exec('rspec ProtonTest/spec/my_example_spec.rb')
+    # If exit code not zero, create snapshot.
+
     return
-    obj.git_reset do
-      system("ls")
-      system('git fetch --all') #&& system("git reset --hard #{target_revision}")
-      #zmien sciezke na 'rspec spec/my_example_spec.rb'
-      obj.run_tests
-      test=system('rspec ProtonTest/spec/my_example_spec.rb')
-      puts "[server] status tests: #{test}"
-
-      obj.control_snapshot
-
-      if $?.exitstatus != 0
-        puts "[server]Tests failure, I do snapshot"
-        #system("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
-
-      else
-        puts "[server] Tests passed, snapshot is unnecessary"
-      end
-    end
+    # server.git_reset do
+    #   system("ls")
+    #   system('git fetch --all') #&& system("git reset --hard #{target_revision}")
+    #   #zmien sciezke na 'rspec spec/my_example_spec.rb'
+    #   server.run_tests
+    #   test=system('rspec ProtonTest/spec/my_example_spec.rb')
+    #   puts "[server] status tests: #{test}"
+    #
+    #   server.control_snapshot
+    #
+    #   if $?.exitstatus != 0
+    #     puts "[server]Tests failure, I do snapshot"
+    #     #system("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
+    #
+    #   else
+    #     puts "[server] Tests passed, snapshot is unnecessary"
+    #   end
+    # end
 
 
     puts "[server] Wait moment I doing my job"
@@ -183,18 +200,31 @@ class RemoteTestSuite
   end
 end
 
-class DRbFile
+class FileTransfer
   include DRb::DRbUndumped
+
+  def initialize(source_path, target_path)
+    @in = File.open(source_path, 'rb')
+    @target_path = target_path
+  end
+
+  def target_path
+    @target_path
+  end
+
+  BUF_SIZE = 256 * 1024
   def read
-    'Hello, world!'
+    x = @in.read(BUF_SIZE)
+    x
   end
 end
-
 
 # test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config) }
 # test = RemoteTestSuite.new(test_machines[0])
 # test.run!
-
+DRb.start_service()
+obj = DRbObject.new_with_uri("druby://localhost:8989")
+obj.upload(FileTransfer.new("install/Proton+Red+Setup.exe", "setup.exe"))
 exit
 #restore and run snapshot from host machine (Win8.1, Win8, Vista, Win7, Win server2012, Win server2008)
 =begin

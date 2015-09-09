@@ -14,12 +14,23 @@ class TestServer
     eval(ruby_code)
   end
 
+  # TODO: Return OpenStruct with fields:
+  # - exit_status
+  # - stdout
+  # - stderr
   def exec(cmd)
-    system(cmd)
+    `#{cmd}`
   end
 
-  def upload(file)
-    file.read
+  def upload(transfer)
+    puts transfer.target_path
+    FileUtils.mkdir_p(File.dirname(transfer.target_path))
+    File.open(transfer.target_path, 'wb+') do |out|
+      while (buf = transfer.read)
+        puts "Read #{buf.size}"
+        out.write(buf)
+      end
+    end
   end
 end
 

@@ -151,25 +151,25 @@ class RemoteTestSuite
 
     DRb.start_service()
     obj = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
-    obj.evaluate("system('ls')")
+    obj.exec('dir')
     return
     obj.git_reset do
       system("ls")
-      # system('git fetch --all') #&& system("git reset --hard #{target_revision}")
-      # #zmien sciezke na 'rspec spec/my_example_spec.rb'
-      # obj.run_tests
-      # test=system('rspec ProtonTest/spec/my_example_spec.rb')
-      # puts "[server] status tests: #{test}"
-      #
-      # obj.control_snapshot
-      #
-      # if $?.exitstatus != 0
-      #   puts "[server]Tests failure, I do snapshot"
-      #   #system("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
-      #
-      # else
-      #   puts "[server] Tests passed, snapshot is unnecessary"
-      # end
+      system('git fetch --all') #&& system("git reset --hard #{target_revision}")
+      #zmien sciezke na 'rspec spec/my_example_spec.rb'
+      obj.run_tests
+      test=system('rspec ProtonTest/spec/my_example_spec.rb')
+      puts "[server] status tests: #{test}"
+
+      obj.control_snapshot
+
+      if $?.exitstatus != 0
+        puts "[server]Tests failure, I do snapshot"
+        #system("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
+
+      else
+        puts "[server] Tests passed, snapshot is unnecessary"
+      end
     end
 
 

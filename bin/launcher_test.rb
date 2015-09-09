@@ -31,8 +31,8 @@ class RemoteMachine < OpenStruct
       begin
         Net::SSH.start(self.hostname, self.username, :password => self.password) do |ssh|
           result = SshExec.ssh_exec!(ssh, cmd)
-          raise "SSH command failed with code #{result.exit_status}" if result.exit_status != 0
           show_ssh_result(result)
+          raise "SSH command failed with code #{result.exit_status}" if result.exit_status != 0
           result
         end
       rescue Net::SSH::HostKeyMismatch => e

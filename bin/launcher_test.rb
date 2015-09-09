@@ -70,24 +70,21 @@ class TestMachine < RemoteMachine
     start(wait: 120)
   end
 
-  # def stop!
-  #   # TODO: Stop vm.
-  #   raise @mother.ssh!("VBoxManage controlvm #{self.vm} poweroff")
-  # end
+  def stop!
+    @mother.ssh!("VBoxManage controlvm #{self.vm} poweroff")
+  end
+
+  def running?
+    output = @mother.ssh!('VBoxManage list runningvms').stdout
+    true if output[self.vm]
+  end
 
   # protected
 
   def clear
-    # TODO: Stop if vm is running (razem z Marcinem).
-    #@mother.ssh!("VBoxManage list runningvms")
-    # output = @mother.ssh!("VBoxManage list runningvms")
-    # if output !=0
-    @mother.ssh!("VBoxManage controlvm #{self.test_vm} poweroff")
-    # end
+    stop! if running?
     @mother.ssh!("VBoxManage snapshot #{self.vm} restore #{self.initial_snapshot}")
-
   end
-
 
   def start(options = {})
     @mother.ssh!("VBoxManage startvm #{self.test_vm}")

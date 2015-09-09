@@ -27,20 +27,30 @@ MOTHER = {#hostname: '10.26.14.13',
 class RemoteMachine < OpenStruct
   def ssh!(cmd, timeout = 180)
     puts "[#{self.hostname}] #{cmd}"
-    # Timeout::timeout(timeout) do
-    begin
-      Net::SSH.start(self.hostname, self.username, password: self.password, timeout: timeout) do |ssh|
-        result = SshExec.ssh_exec!(ssh, cmd)
-        show_ssh_result(result)
-        raise "SSH command failed with code #{result.exit_status}" if result.exit_status != 0
-        result
+    Timeout::timeout(timeout) do
+      begin
+        Net::SSH.start(self.hostname, self.username, password: self.password, timeout: timeout) do |ssh|
+          result = SshExec.ssh_exec!(ssh, cmd)
+          show_ssh_result(result)
+          raise "SSH command failed with code #{result.exit_status}" if result.exit_status != 0
+          result
+        end
+      rescue Net::SSH::HostKeyMismatch => e
+        e.remember_host!
+        retry
       end
-    rescue Net::SSH::HostKeyMismatch => e
-      e.remember_host!
-      retry
     end
-    # end
   end
+
+  def scp!(source_path, target_path)
+    puts "[#{self.hostname}] scp #{source_path} #{target_path}"
+    Net::SCP.start(self.hostname, self.username, :password => self.password) do |scp|
+      # synchronous (blocking) upload; call blocks until upload completes
+      scp.upload! source_path, target_path
+    end
+  end
+
+  protected
 
   def show_ssh_result(result)
     stdout_prefix = "==>"
@@ -48,14 +58,6 @@ class RemoteMachine < OpenStruct
     puts result.stdout.split("\n").map { |line| "#{stdout_prefix} #{line}" }.join("\n") unless result.stdout.strip.empty?
     puts result.stderr.split("\n").map { |line| "#{stderr_prefix} #{line}" }.join("\n") unless result.stderr.strip.empty?
   end
-
-#  def scp!(source_path, target_path)
-#    puts "[#{self.hostname}] scp #{source_path} #{target_path}"
-#    Net::SCP.start(self.hostname, self.username, :password => self.password) do |scp|
-#      # synchronous (blocking) upload; call blocks until upload completes
-#      scp.upload! source_path, target_path
-#    end
-#  end
 end
 
 # Virtual machine with clean environment for tests restored from a VB snapshot.

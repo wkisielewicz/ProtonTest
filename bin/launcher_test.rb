@@ -79,11 +79,15 @@ class TestMachine < RemoteMachine
     true if output[self.vm]
   end
 
-  # protected
+  protected
 
   def clear
     stop! if running?
-    @mother.ssh!("VBoxManage snapshot #{self.vm} restore #{self.initial_snapshot}")
+    restore_from(self.initial_snapshot)
+  end
+
+  def restore_from(snapshot)
+    @mother.ssh!("VBoxManage snapshot #{self.vm} restore #{snapshot}")
   end
 
   def start(options = {})

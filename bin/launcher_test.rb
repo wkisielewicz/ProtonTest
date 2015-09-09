@@ -10,12 +10,12 @@ MACHINES = [
     #          hostname: '10.26.14.19',
     #          username: 'IEUser',
     #          password: 'Passw0rd!'},
-            {vm: 'Win7',
-             initial_snapshot: 'server_test',
-             hostname: '192.168.0.111',
-             #hostname: '10.26.14.20',
-             username: 'IEUser',
-             password: 'Passw0rd!'}]
+    {vm: 'Win7',
+     initial_snapshot: 'server_test',
+     hostname: '192.168.0.111',
+     #hostname: '10.26.14.20',
+     username: 'IEUser',
+     password: 'Passw0rd!'}]
 
 MOTHER = {#hostname: '10.26.14.13',
           hostname: '192.168.0.101',
@@ -24,49 +24,36 @@ MOTHER = {#hostname: '10.26.14.13',
 
 # A remote machine.
 class RemoteMachine < OpenStruct
-
-
-  # def ssh!(cmd)
-  #
-  #   puts "[#{self.hostname}] #{cmd}"
-  #   Net::SSH.start(self.hostname, self.username, :password => self.password) do |ssh|
-  #     res = ssh.exec!(cmd)
-  #     puts res # TODO: Raise exception on failure
-  #   end
-  # end
-
-  def ssh!(cmd)
-    begin
+  def ssh!(cmd, timeout = 180)
     puts "[#{self.hostname}] #{cmd}"
-
-     Timeout::timeout(180) do
+    Timeout::timeout(timeout) do
       begin
-
-    Net::SSH.start(self.hostname, self.username, :password => self.password) do |ssh|
-      results = ssh.exec!(cmd)
-      puts results # TODO: Raise exception on failure
-
-    end
+        Net::SSH.start(self.hostname, self.username, :password => self.password) do |ssh|
+          results = ssh.exec!(cmd)
+          # result = SshExec.ssh_exec!(cmd)
+          # raise "SSH command failed with code #{result.exit_code}" if result.exit_code != 0
+          # puts result.stdout # TODO: Raise exception on failure
+          # puts result.stderr
+          puts results
+        end
       rescue Net::SSH::HostKeyMismatch => e
         e.remember_host!
         retry
-      rescue StandardError => e
-        return e.to_s
+      # rescue Exception => e
+      #   puts "Error in ssh!: #{e}"
+      #   puts e.backtrace
+      #   raise e
       end
-     end
-
-    rescue Timeout::Error
-      return "Connection timed out"
     end
   end
 
-#  def scp!(source_path, target_path)
-#    puts "[#{self.hostname}] scp #{source_path} #{target_path}"
-#    Net::SCP.start(self.hostname, self.username, :password => self.password) do |scp|
-#      # synchronous (blocking) upload; call blocks until upload completes
-#      scp.upload! source_path, target_path
-#    end
-#  end
+  #  def scp!(source_path, target_path)
+  #    puts "[#{self.hostname}] scp #{source_path} #{target_path}"
+  #    Net::SCP.start(self.hostname, self.username, :password => self.password) do |scp|
+  #      # synchronous (blocking) upload; call blocks until upload completes
+  #      scp.upload! source_path, target_path
+  #    end
+  #  end
 end
 
 # Virtual machine with clean environment for tests restored from a VB snapshot.
@@ -94,23 +81,24 @@ class TestMachine < RemoteMachine
   protected
 
   def clear
-    # TODO: Stop if vm is running.
+    # TODO: Stop if vm is running (razem z Marcinem).
     #@mother.ssh!("VBoxManage list runningvms")
-    output = @mother.ssh!("VBoxManage list runningvms")
-    if output !=0
+    # output = @mother.ssh!("VBoxManage list runningvms")
+    # if output !=0
     @mother.ssh!("VBoxManage controlvm #{self.vm} poweroff")
-    end
+    # end
     @mother.ssh!("VBoxManage snapshot #{self.vm} restore #{self.initial_snapshot}")
 
-    end
+  end
 
 
   def start
-   begin
-    raise @mother.ssh!("VBoxManage startvm #{self.vm}")
+    begin
+      @mother.ssh!("VBoxManage startvm #{self.vm}")
     rescue Exception => e
-    puts e.message
-    puts e.backtrace.inspect
+      puts e.message
+      puts e.backtrace.inspect
+      raise
     end
   end
 end
@@ -137,12 +125,12 @@ class RemoteTestSuite
 
   # protected
 
- # def scp_proton
- #   project_root = Pathname.new(__FILE__).dirname.dirname
- #   install_path = File.join(project_root, 'install', 'Proton+Red+Setup.exe')
- #   @vm.scp! install_path, "#{REMOTE_UPLOAD_DIR}"
- #  end
-#@mother.ssh!("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
+  # def scp_proton
+  #   project_root = Pathname.new(__FILE__).dirname.dirname
+  #   install_path = File.join(project_root, 'install', 'Proton+Red+Setup.exe')
+  #   @vm.scp! install_path, "#{REMOTE_UPLOAD_DIR}"
+  #  end
+  #@mother.ssh!("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
   def install_proton
     begin
       raise @vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
@@ -160,21 +148,22 @@ class RemoteTestSuite
     obj = DRbObject.new_with_uri("druby://#{@vm.hostname}:8989")
 
     obj.git_reset do
-      system('git fetch --all') && system("git reset --hard #{target_revision}")
-      #zmien sciezke na 'rspec spec/my_example_spec.rb'
-      obj.run_tests
-      test=system('rspec ProtonTest/spec/my_example_spec.rb')
-      puts "[server] status tests: #{test}"
-
-      obj.control_snapshot
-
-      if $?.exitstatus != 0
-        puts "[server]Tests failure, I do snapshot"
-        #system("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
-
-      else
-        puts "[server] Tests passed, snapshot is unnecessary"
-      end
+      system("cat dddd")
+      # system('git fetch --all') #&& system("git reset --hard #{target_revision}")
+      # #zmien sciezke na 'rspec spec/my_example_spec.rb'
+      # obj.run_tests
+      # test=system('rspec ProtonTest/spec/my_example_spec.rb')
+      # puts "[server] status tests: #{test}"
+      #
+      # obj.control_snapshot
+      #
+      # if $?.exitstatus != 0
+      #   puts "[server]Tests failure, I do snapshot"
+      #   #system("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
+      #
+      # else
+      #   puts "[server] Tests passed, snapshot is unnecessary"
+      # end
     end
 
 

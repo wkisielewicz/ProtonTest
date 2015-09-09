@@ -17,6 +17,10 @@ class TestServer
   def exec(cmd)
     system(cmd)
   end
+
+  def upload(file)
+    file.read
+  end
 end
 
 FRONT_OBJECT = TestServer.new

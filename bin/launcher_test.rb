@@ -12,7 +12,7 @@ MACHINES = [
     #          username: 'IEUser',
     #          password: 'Passw0rd!'},
     {vm: 'Win7',
-     initial_snapshot: 'server_test',
+     initial_snapshot: 'server_test3',
      hostname: '192.168.0.111',
      #hostname: '10.26.14.20',
      username: 'IEUser',
@@ -183,10 +183,17 @@ class RemoteTestSuite
   end
 end
 
+class DRbFile
+  include DRb::DRbUndumped
+  def read
+    'Hello, world!'
+  end
+end
 
-test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config) }
-test = RemoteTestSuite.new(test_machines[0])
-test.run!
+
+# test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config) }
+# test = RemoteTestSuite.new(test_machines[0])
+# test.run!
 
 exit
 #restore and run snapshot from host machine (Win8.1, Win8, Vista, Win7, Win server2012, Win server2008)

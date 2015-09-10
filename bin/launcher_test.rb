@@ -4,6 +4,7 @@ require 'net/scp'
 require 'ostruct'
 require 'drb/drb'
 require 'ssh-exec'
+require 'pathname'
 
 MACHINES = [
     # {vm: 'Win8.1',
@@ -16,7 +17,8 @@ MACHINES = [
      hostname: '192.168.0.111',
      #hostname: '10.26.14.20',
      username: 'IEUser',
-     password: 'Passw0rd!'}]
+     password: 'Passw0rd!',
+     spec_dir: 'C:\\ProtonTest'}]
 
 MOTHER = {#hostname: '10.26.14.13',
           hostname: '192.168.0.101',
@@ -129,9 +131,9 @@ class RemoteTestSuite
   end
 
   def run!
-    @test_vm.setup!
+    #@test_vm.setup!
     #scp_proton
-    install_proton
+    #install_proton
     run_all_tests
   end
 
@@ -148,25 +150,25 @@ class RemoteTestSuite
   end
 
   # Main TODO
-  # - Benchmark upload of large files.
+  # - Benchmark upload of large files. +
   # - Copy spec/ dir to server to avoid having to use git.
-  # - Run spec on server using #exec.
+# - Run spec on server using #exec.
   # - Rewrite install_proton using #exec.
   # - Use #upload to copy setup to avoid shared folders.
-  # - Refactor code (w/ upierdliwy Marcin).
+  # - Refactor code (w/ m¹dry i sympatyczny Marcin).
+
+
+
 
   def run_all_tests
 
     DRb.start_service()
-    server = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
 
+    @server = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
+    copy_specs(@test_vm.spec_dir)
 
-    # Copy specs using upload.
-    # Dir.glob('../spec/**/*') do |path|
-    #   server.upload(FileTransfer.new(path, ....?))
-    # end
     # # Run specs using exec
-    # server.exec('rspec ProtonTest/spec/my_example_spec.rb')
+     server.exec('rspec ProtonTest/spec/my_example_spec.rb')
     # If exit code not zero, create snapshot.
 
     return
@@ -198,6 +200,16 @@ class RemoteTestSuite
     # TODO: Stop DRb service?
     DRb.stop_service
   end
+
+  def copy_specs(target_dir)
+    base_dir = File.join(File.dirname(__FILE__), "..")
+    specfiles = File.join(base_dir, 'spec/**/*')
+    Dir.glob(specfiles) do |source_path|
+      target_path = File.join(target_dir, Pathname.new(source_path).relative_path_from(Pathname.new(base_dir)).to_s)
+      @server.upload(FileTransfer.new(source_path, target_path))
+    end
+  end
+
 end
 
 class FileTransfer
@@ -219,87 +231,28 @@ class FileTransfer
   end
 end
 
-# test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config) }
-# test = RemoteTestSuite.new(test_machines[0])
-# test.run!
-DRb.start_service()
-obj = DRbObject.new_with_uri("druby://192.168.0.111:8989")
-obj.upload(FileTransfer.new("install/Proton+Red+Setup.exe", "setup.exe"))
+ test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config) }
+ test = RemoteTestSuite.new(test_machines[0])
+ test.run!
+#  DRb.start_service()
+#  obj = DRbObject.new_with_uri("localhost:8989")
+#  obj.upload(FileTransfer.new("install/Proton+Red+Setup.exe", "setup.exe"))
+#
+#
+# DRb.start_service()
+# server = DRbObject.new_with_uri("192.168.0.111:8989")
+# base_dir = File.join(File.dirname(__FILE__), "..")
+# specfiles = File.join(base_dir, 'spec/**/*')
+# Dir.glob(specfiles) do |source_path|
+#   puts source_path
+#
+#   target_path = Pathname.new(source_path).relative_path_from(Pathname.new(base_dir)).to_s
+#   puts target_path
+  # server.upload(FileTransfer.new(path, ))
+# end
+
 exit
-#restore and run snapshot from host machine (Win8.1, Win8, Vista, Win7, Win server2012, Win server2008)
-=begin
-hostname = '10.26.14.13'
-username = 'kisiel'
-password = 'qE2y2Uc9Gz'
 
-Net::SSH.start(hostname, username, :password => password) do |ssh|
-  res = ssh.exec!('VBoxManage snapshot Win8.1firebird restore test_firebird_2_0
-		               VBoxManage startvm Win8.1firebird
-                   VBoxManage snapshot Vistafirebird restore test_firebird_2_0
-                   VBoxManage startvm Vistafirebird
-                   VBoxManage snapshot Win7firebird restore test_firebird_2_0
-                   VBoxManage startvm Win7firebird
-		               VBoxManage snapshot Win8firebird restore test_firebird_2_0
-                   VBoxManage startvm Win8firebird
-                   VBoxManage snapshot WindowsServerFirebird2012 restore test_firebird_2_0
-                   VBoxManage startvm WindowsServerFirebird2012
-                   VBoxManage snapshot WinServerFirebird2008 restore test_firebird_2_0
-                   VBoxManage startvm WinServerFirebird2008')
-  puts res
-end
-
-# call for all machines the user name IEUser
-# install node and run tests in machine IEUser
-# copy client.rb to my path
-# run client file
-
-hosts =['10.26.14.17', '10.26.14.20', '10.26.14.21', '10.26.14.19']
-username ='IEUser'
-password ='Passw0rd!'
-
-hosts.each do |host|
-  Net::SSH.start(host, username, :password => password) do |ssh|
-    res = ssh.exec!('cd home/IEUser/ProtonTest/bin
-                     ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT')
-
-    puts res
-  end
-
-# connect windows server 2012
-# install node and run tests in machine IEUser
-# copy client.rb to my path
-# run client file
-
-  hostname= '10.26.14.14'
-  username ='winserver'
-  password ='Passw0rd!'
-
-  Net::SSH.start(hostname, username, :password => password) do |ssh|
-    res = ssh.exec!('cd home/winserver/ProtonTest/bin
-                   ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT')
-
-    puts res
-
-  end
-
-# connect windows server 2008
-# install node and run tests in machine IEUser
-# copy client.rb to my path
-# run client file
-
-  hostname= '10.26.14.18'
-  username ='cyg_server'
-  password ='Passw0rd!'
-
-  Net::SSH.start(hostname, username, :password => password) do |ssh|
-    res = ssh.exec!('cd home/cyg_server/ProtonTest/bin
-                   ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT')
-
-    puts res
-  end
-end
-=end
-		
 
 
 

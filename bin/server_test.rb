@@ -1,5 +1,7 @@
 require 'drb/drb'
+require 'rubygems'
 require 'pathname'
+require 'rspec/core'
 require 'fileutils'
 
 URI = 'druby://0.0.0.0:8989'
@@ -16,14 +18,21 @@ class TestServer
   end
 
 
-
   # TODO: Return OpenStruct with fields:
   # - exit_status
   # - stdout
-  # - stderr
+  # - stderr -  backtrick nie ma obs³ugi stderr --> przekierowanie stderr na stdout
+  #puts "result is #{result}"
+  #puts $?.success?
   def exec(cmd)
-    `#{cmd}`
-  end
+  begin
+    result = `#{cmd} 2>&1 `
+    puts " Command result: #{result}"
+    raise "Exec command failed with code #{$?.success?}" if $?.success? != 0
+   result
+   end
+ end
+
 
   def upload(transfer)
     puts transfer.target_path
@@ -40,3 +49,5 @@ end
 FRONT_OBJECT = TestServer.new
 DRb.start_service(URI, FRONT_OBJECT)
 DRb.thread.join
+
+

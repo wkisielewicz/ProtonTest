@@ -18,6 +18,7 @@ MACHINES = [
      #hostname: '10.26.14.20',
      username: 'IEUser',
      password: 'Passw0rd!',
+     install_dir: 'C:\\ProtonTest',
      spec_dir: 'C:\\ProtonTest'}]
 
 MOTHER = {#hostname: '10.26.14.13',
@@ -123,15 +124,14 @@ end
 
 # A suite of tests to run on a remote test machine.
 class RemoteTestSuite
-  #REMOTE_UPLOAD_DIR = '/tmp/'
-  REMOTE_UPLOAD_DIR = '//vboxsrv/test/'
+  UPLOAD_DIR = @test_vm.install_dir
 
   def initialize(test_machine)
     @test_vm = test_machine
   end
 
   def run!
-    #@test_vm.setup!
+    @test_vm.setup!
     #scp_proton
     #install_proton
     run_all_tests
@@ -144,10 +144,6 @@ class RemoteTestSuite
   #   install_path = File.join(project_root, 'install', 'Proton+Red+Setup.exe')
   #   @test_vm.scp! install_path, "#{REMOTE_UPLOAD_DIR}"
   #  end
-  #@mother.ssh!("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
-  def install_proton
-    @test_vm.ssh!("cd #{REMOTE_UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
-  end
 
   # Main TODO
   # - Benchmark upload of large files. +
@@ -157,48 +153,34 @@ class RemoteTestSuite
   # - Use #upload to copy setup to avoid shared folders.
   # - Refactor code (w/ m¹dry i sympatyczny Marcin).
 
-
-
-
   def run_all_tests
 
     DRb.start_service()
 
     @server = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
+    setup_upload(@test_vm.install_dir)
+    install_proton
     copy_specs(@test_vm.spec_dir)
-
-    # # Run specs using exec
-     server.exec('rspec ProtonTest/spec/my_example_spec.rb')
-    # If exit code not zero, create snapshot.
+    run_tests
 
     return
-    # server.git_reset do
-    #   system("ls")
-    #   system('git fetch --all') #&& system("git reset --hard #{target_revision}")
-    #   #zmien sciezke na 'rspec spec/my_example_spec.rb'
-    #   server.run_tests
-    #   test=system('rspec ProtonTest/spec/my_example_spec.rb')
-    #   puts "[server] status tests: #{test}"
-    #
-    #   server.control_snapshot
-    #
-    #   if $?.exitstatus != 0
-    #     puts "[server]Tests failure, I do snapshot"
-    #     #system("VBoxManage snapshot #{self.name} take #{self.initial_snapshot}test_failure")
-    #
-    #   else
-    #     puts "[server] Tests passed, snapshot is unnecessary"
-    #   end
-    # end
-
-
-    puts "[server] Wait moment I doing my job"
-    gets
-
 
   ensure
     # TODO: Stop DRb service?
     DRb.stop_service
+  end
+
+  def setup_upload(target_dir)
+    base_dir = File.join(File.dirname(__FILE__), "..")
+    setup = File.join(base_dir, 'install/**')
+    Dir.glob(setup) do |source_path|
+      target_path = File.join(target_dir, Pathname.new(source_path).relative_path_from(Pathname.new(base_dir)).to_s)
+      @server.upload(FileTransfer.new(source_path, target_path))
+    end
+  end
+
+  def install_proton
+    @server.exec("cd #{UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
   end
 
   def copy_specs(target_dir)
@@ -206,7 +188,17 @@ class RemoteTestSuite
     specfiles = File.join(base_dir, 'spec/**/*')
     Dir.glob(specfiles) do |source_path|
       target_path = File.join(target_dir, Pathname.new(source_path).relative_path_from(Pathname.new(base_dir)).to_s)
-      @server.upload(FileTransfer.new(source_path, target_path))
+      @server.upload(FileTransfer.new(source_path, target_path)) if Dir.entries(base_dir).select { |f| File.file?(f) }  #Dir.file?(source_path)
+    end
+  end
+
+  def run_tests
+    @server.exec('rspec ProtonTest/spec/my_example_spec.rb')
+    if $?.success? != 0
+      puts "[server]Tests failure, I do snapshot"
+    @server.exec("VBoxManage snapshot #{@test_vm} take test_failure")
+    else
+      puts "[server] Tests passed, snapshot is unnecessary"
     end
   end
 
@@ -237,20 +229,6 @@ end
 #  DRb.start_service()
 #  obj = DRbObject.new_with_uri("localhost:8989")
 #  obj.upload(FileTransfer.new("install/Proton+Red+Setup.exe", "setup.exe"))
-#
-#
-# DRb.start_service()
-# server = DRbObject.new_with_uri("192.168.0.111:8989")
-# base_dir = File.join(File.dirname(__FILE__), "..")
-# specfiles = File.join(base_dir, 'spec/**/*')
-# Dir.glob(specfiles) do |source_path|
-#   puts source_path
-#
-#   target_path = Pathname.new(source_path).relative_path_from(Pathname.new(base_dir)).to_s
-#   puts target_path
-  # server.upload(FileTransfer.new(path, ))
-# end
-
 exit
 
 

@@ -1,4 +1,4 @@
-require 'drb'
+require 'drb/drb'
 require 'pathname'
 require 'fileutils'
 
@@ -14,6 +14,8 @@ class TestServer
   def evaluate(ruby_code)
     eval(ruby_code)
   end
+
+
 
   # TODO: Return OpenStruct with fields:
   # - exit_status

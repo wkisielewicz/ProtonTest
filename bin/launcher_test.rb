@@ -124,14 +124,14 @@ end
 
 # A suite of tests to run on a remote test machine.
 class RemoteTestSuite
-  UPLOAD_DIR = @test_vm.install_dir
+  #UPLOAD_DIR = @test_vm.spec_dir
 
   def initialize(test_machine)
     @test_vm = test_machine
   end
 
   def run!
-    @test_vm.setup!
+    #@test_vm.setup!
     #scp_proton
     #install_proton
     run_all_tests
@@ -160,8 +160,8 @@ class RemoteTestSuite
     @server = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
     setup_upload(@test_vm.install_dir)
     install_proton
-    copy_specs(@test_vm.spec_dir)
-    run_tests
+    #copy_specs(@test_vm.spec_dir)
+    #run_tests
 
     return
 
@@ -171,16 +171,17 @@ class RemoteTestSuite
   end
 
   def setup_upload(target_dir)
-    base_dir = File.join(File.dirname(__FILE__), "..")
-    setup = File.join(base_dir, 'install/**')
-    Dir.glob(setup) do |source_path|
-      target_path = File.join(target_dir, Pathname.new(source_path).relative_path_from(Pathname.new(base_dir)).to_s)
-      @server.upload(FileTransfer.new(source_path, target_path))
-    end
+     base_dir = File.join(File.dirname(__FILE__), "..")
+     setup = File.join(base_dir, 'install/**/*')
+     Dir.glob(setup) do |source_path|
+       target_path = File.join(target_dir, Pathname.new(source_path).relative_path_from(Pathname.new(base_dir)).to_s)
+       @server.upload(FileTransfer.new(source_path, target_path))
+     end
+
   end
 
   def install_proton
-    @server.exec("cd #{UPLOAD_DIR} && ./Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
+    @server.exec("cd #{@test_vm.install_dir} && #{@test_vm.install_dir}\\install\\Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
   end
 
   def copy_specs(target_dir)
@@ -188,17 +189,17 @@ class RemoteTestSuite
     specfiles = File.join(base_dir, 'spec/**/*')
     Dir.glob(specfiles) do |source_path|
       target_path = File.join(target_dir, Pathname.new(source_path).relative_path_from(Pathname.new(base_dir)).to_s)
-      @server.upload(FileTransfer.new(source_path, target_path)) if Dir.entries(base_dir).select { |f| File.file?(f) }  #Dir.file?(source_path)
+      @server.upload(FileTransfer.new(source_path, target_path)) #if Dir.entries(base_dir).select { |f| File.file?(f) }  #Dir.file?(source_path)
     end
   end
 
   def run_tests
     @server.exec('rspec ProtonTest/spec/my_example_spec.rb')
     if $?.success? != 0
-      puts "[server]Tests failure, I do snapshot"
+      puts "Tests failure, I do snapshot"
     @server.exec("VBoxManage snapshot #{@test_vm} take test_failure")
     else
-      puts "[server] Tests passed, snapshot is unnecessary"
+      puts "Tests passed, snapshot is unnecessary"
     end
   end
 

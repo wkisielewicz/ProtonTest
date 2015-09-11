@@ -24,14 +24,15 @@ class TestServer
   # - stdout
   # - stderr
   # Raises an error if exit code isn't zero.
+  def exec!(cmd)
+    status = exec(cmd)
+    raise "Command failed with exit status #{status.exitstatus}" unless status.exitstatus == 0
+  end
+
   def exec(cmd)
-    puts cmd
-    begin
-      Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
-        status = wait_thr.value # Process::Status object returned.
-        raise "Command failed with exit status #{status.exitstatus}" unless status.exitstatus == 0
-        OpenStruct.new(exit_status: status.exitstatus, stdout: stdout.read, stderr: stderr.read)
-      end
+    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+      status = wait_thr.value # Process::Status object returned.
+      OpenStruct.new(exit_status: status.exitstatus, stdout: stdout.read, stderr: stderr.read)
     end
   end
 

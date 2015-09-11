@@ -45,14 +45,6 @@ class RemoteMachine < OpenStruct
     end
   end
 
-  def scp!(source_path, target_path)
-    puts "[#{self.hostname}] scp #{source_path} #{target_path}"
-    Net::SCP.start(self.hostname, self.username, :password => self.password) do |scp|
-      # synchronous (blocking) upload; call blocks until upload completes
-      scp.upload! source_path, target_path
-    end
-  end
-
   protected
 
   def show_ssh_result(result)
@@ -82,6 +74,10 @@ class TestMachine < RemoteMachine
   def running?
     output = @mother.ssh!('VBoxManage list runningvms').stdout
     true if output[self.vm]
+  end
+
+  def take_snapshot!(snapshot_name)
+    @mother.ssh!("VBoxManage snapshot #{self.vm} take test_failure")
   end
 
   protected
@@ -133,19 +129,10 @@ class RemoteTestSuite
   end
 
   def run!
-    @test_vm.setup!
-    #scp_proton
-    install_proton
+    #@test_vm.setup!
     run_all_tests
   end
 
-  # protected
-
-  # def scp_proton
-  #   project_root = Pathname.new(__FILE__).dirname.dirname
-  #   install_path = File.join(project_root, 'install', 'Proton+Red+Setup.exe')
-  #   @test_vm.scp! install_path, "#{REMOTE_UPLOAD_DIR}"
-  #  end
 
   # Main TODO
   # - Benchmark upload of large files. +
@@ -156,9 +143,9 @@ class RemoteTestSuite
   # - Refactor code (w/ m¹dry i sympatyczny Marcin).
 
   def run_all_tests
-    setup_upload(@test_vm.install_dir)
-    install_proton
-    #copy_specs(@test_vm.spec_dir)
+    #setup_upload(@test_vm.install_dir)
+    #install_proton
+    copy_specs(@test_vm.spec_dir)
     run_tests
   end
 
@@ -188,15 +175,16 @@ class RemoteTestSuite
   end
 
   def run_tests
-    @server.exec("rspec #{@test_vm.spec_dir}\\spec\\my_example_spec.rb")
-    if $?.success? != 0
-      puts "Tests failure, I do snapshot"
-      @server.exec("VBoxManage snapshot #{@test_vm} take test_failure")
-    else
-      puts "Tests passed, snapshot is unnecessary"
-    end
+     status = @server.exec("rspec #{@test_vm.spec_dir}\\spec\\firebird_wizzard.rb")
+     if status.exit_code == 0
+       @test_vm.take_snapshot!("test_failure")
+       puts "Tests passed, snapshot is unnecessary"
+     else
+       puts status.stdout
+       puts status.stderr
+       puts "fail"
+     end
   end
-
 end
 
 class FileTransfer
@@ -228,7 +216,7 @@ test.run!
 #  DRb.start_service()
 #  obj = DRbObject.new_with_uri("localhost:8989")
 #  obj.upload(FileTransfer.new("install/Proton+Red+Setup.exe", "setup.exe"))
- exit
+ #exit
 
 
 

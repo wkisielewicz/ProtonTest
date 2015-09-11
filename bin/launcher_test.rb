@@ -77,7 +77,7 @@ class TestMachine < RemoteMachine
   end
 
   def take_snapshot!(snapshot_name)
-    @mother.ssh!("VBoxManage snapshot #{self.vm} take test_failure")
+    @mother.ssh!("VBoxManage snapshot #{self.vm} take #{snapshot_name}")
   end
 
   protected
@@ -120,7 +120,6 @@ end
 
 # A suite of tests to run on a remote test machine.
 class RemoteTestSuite
-  #UPLOAD_DIR = @test_vm.spec_dir
 
   # Requires DRb sevice to be started.
   def initialize(test_machine)
@@ -129,13 +128,13 @@ class RemoteTestSuite
   end
 
   def run!
-    #@test_vm.setup!
+    @test_vm.setup!
     run_all_tests
   end
 
 
   # Main TODO
-  # - Benchmark upload of large files. +
+  # - Benchmark upload of large files.
   # - Copy spec/ dir to server to avoid having to use git.
   # - Run spec on server using #exec.
   # - Rewrite install_proton using #exec.
@@ -143,8 +142,8 @@ class RemoteTestSuite
   # - Refactor code (w/ m¹dry i sympatyczny Marcin).
 
   def run_all_tests
-    #setup_upload(@test_vm.install_dir)
-    #install_proton
+    setup_upload(@test_vm.install_dir)
+    install_proton
     copy_specs(@test_vm.spec_dir)
     run_tests
   end
@@ -175,14 +174,13 @@ class RemoteTestSuite
   end
 
   def run_tests
-     status = @server.exec("rspec #{@test_vm.spec_dir}\\spec\\firebird_wizzard.rb")
+     status = @server.exec("rspec #{@test_vm.spec_dir}\\spec\\firebird_wizzard_spec.rb")
      if status.exit_code == 0
-       @test_vm.take_snapshot!("test_failure")
        puts "Tests passed, snapshot is unnecessary"
      else
+       @test_vm.take_snapshot!("test_failure")
        puts status.stdout
        puts status.stderr
-       puts "fail"
      end
   end
 end

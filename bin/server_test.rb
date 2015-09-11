@@ -27,7 +27,7 @@ class TestServer
   def exec(cmd)
   begin
     result = `#{cmd} 2>&1 `
-    puts " Command result: #{result}"
+    puts result
     raise "Exec command failed with code #{$?.success?}" if $?.success? != 0
    result
    end

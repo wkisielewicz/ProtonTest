@@ -3,6 +3,8 @@ require 'rubygems'
 require 'pathname'
 require 'rspec/core'
 require 'fileutils'
+require 'open3'
+require 'ostruct'
 
 URI = 'druby://0.0.0.0:8989'
 
@@ -17,22 +19,20 @@ class TestServer
     eval(ruby_code)
   end
 
-
-  # TODO: Return OpenStruct with fields:
+  # Runs command 'cmd' and returns instance containig:
   # - exit_status
   # - stdout
-  # - stderr -  backtrick nie ma obs³ugi stderr --> przekierowanie stderr na stdout
-  #puts "result is #{result}"
-  #puts $?.success?
+  # - stderr
+  # Raises an error if exit code isn't zero.
   def exec(cmd)
-  begin
-    result = `#{cmd} 2>&1 `
-    puts result
-    raise "Exec command end with code #{$?.success?}" if $?.success? != 0
-   result
-   end
- end
-
+    begin
+      Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+        status = wait_thr.value # Process::Status object returned.
+        raise "Command failed with exit status #{status.exitstatus}" unless status.exitstatus == 0
+        OpenStruct.new(exit_status: status.exitstatus, stdout: stdout.read, stderr: stderr.read)
+      end
+    end
+  end
 
   def upload(transfer)
     puts transfer.target_path

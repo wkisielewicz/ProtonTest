@@ -8,10 +8,32 @@ require 'pathname'
 
 MACHINES = [
     # {vm: 'Win8.1',
-    #          initial_snapshot: 'test_firebird_2_0',
+    #          initial_snapshot: 'test_firebird_2_5',
     #          hostname: '10.26.14.19',
+    #          hostname: '192.168.0.113'
     #          username: 'IEUser',
     #          password: 'Passw0rd!'},
+    # {vm: 'Vista',
+    #         initial_snapshot: 'test_firebird_2_5',
+    #         hostname:  '192.168.0.119',
+    #         username: 'IEUser',
+    #         password: 'Passw0rd!'},
+    # {vm: 'Win8',
+    #         initial_snapshot: 'test_firebird_2_5',
+    #         hostname:  '192.168.0.120',
+    #         username: 'IEUser',
+    #         password: 'Passw0rd!'},
+    # {vm: 'WindowsServer2012',
+    #         initial_snapshot: 'test_firebird_2_5',
+    #         hostname:  '192.168.0.', <--- wpisz adres
+    #         username: 'winserver',
+    #         password: 'Passw0rd!'},
+    # {vm: 'WinServer2008',
+    #         initial_snapshot: 'test_firebird_2_5',
+    #         hostname:  '192.168.0.121',
+    #         username: 'Administrator',
+    #         password: 'Passw0rd!'},
+
     {vm: 'Win7',
      initial_snapshot: 'server_test4',
      hostname: '192.168.0.111',
@@ -101,7 +123,7 @@ class TestMachine < RemoteMachine
     Timeout::timeout(wait) do
       while true
         ignore_exceptions do
-          ssh!('echo', 30)
+          ssh!('echo', 40)
           return
         end
       end
@@ -209,12 +231,8 @@ DRb.start_service
 
 test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config)}
 test = RemoteTestSuite.new(test_machines[0])
-# test.copy_specs("C:\\ProtonTest2")
 test.run!
-#  DRb.start_service()
-#  obj = DRbObject.new_with_uri("localhost:8989")
-#  obj.upload(FileTransfer.new("install/Proton+Red+Setup.exe", "setup.exe"))
- #exit
+exit
 
 
 

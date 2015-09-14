@@ -1,59 +1,46 @@
 require 'drb/drb'
+require 'rubygems'
 require 'pathname'
-
-# The URI for the server to connect to
-
+require 'rspec/core'
+require 'fileutils'
+require 'open3'
+require 'ostruct'
 
 URI = 'druby://0.0.0.0:8989'
 
-######## Git and run tests #####################
 class TestServer
 
-  def initialize
-    @branch = 'master'
-    project_root = Pathname.new(__FILE__).dirname.dirname
-    Dir.chdir(project_root)
+  # Runs command 'cmd' and returns instance containig:
+  # - exit_status
+  # - stdout
+  # - stderr
+  # Raises an error if exit code isn't zero.
+  def exec!(cmd)
+    status = exec(cmd)
+    raise "Command failed with exit status #{status.exitstatus}" unless status.exitstatus == 0
   end
 
-  def git_reset
-    system('git fetch --all')
-    system("git reset --hard #{target_revision}")
-  end
-
-  def target_revision
-    system("rev-parse #{@branch}")
-  end
-
-  def run_tests
-    ref = system('rspec spec/my_example_spec.rb')
-    puts ref
-  end
-
-  ####### snapshot when exit code =! 0 or true ######
-
-  def control_snapshot
-
-    if $?.exitstatus != 0
-      puts "OMG FAIL :)"
-      #system()
-
-    else
-      puts "OK "
+  def exec(cmd)
+    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+      status = wait_thr.value # Process::Status object returned.
+      OpenStruct.new(exit_status: status.exitstatus, stdout: stdout.read, stderr: stderr.read)
     end
   end
 
-  def git_tests
-    git_reset
-    run_tests
-    control_snapshot
+  def upload(transfer)
+    puts transfer.target_path
+    FileUtils.mkdir_p(File.dirname(transfer.target_path))
+    File.open(transfer.target_path, 'wb+') do |out|
+      while (buf = transfer.read)
+        puts "Read #{buf.size}"
+        out.write(buf)
+      end
+    end
   end
 end
 
-FRONT_OBJECT=TestServer.new
-
-$SAFE = 1 # disable eval() and friends --security
-
+FRONT_OBJECT = TestServer.new
 DRb.start_service(URI, FRONT_OBJECT)
-
 DRb.thread.join
+
 

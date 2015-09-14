@@ -182,7 +182,6 @@
     <orderEntry type="library" scope="PROVIDED" name="rspec-expectations (v3.3.1, ruby-2.1.6-p336 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-mocks (v3.3.2, ruby-2.1.6-p336 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-support (v3.3.0, ruby-2.1.6-p336 (1)) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rubygems-update (v2.3.0, ruby-2.1.6-p336 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rubyzip (v1.1.7, ruby-2.1.6-p336 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="selenium-webdriver (v2.46.2, ruby-2.1.6-p336 (1)) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ssh-exec (v0.1.1, ruby-2.1.6-p336 (1)) [gem]" level="application" />

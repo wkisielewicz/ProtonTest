@@ -3,8 +3,10 @@ require 'net/ssh'
 require 'net/scp'
 require 'ostruct'
 require 'drb/drb'
+require 'timeout'
 require 'ssh-exec'
 require 'pathname'
+require 'io/wait'
 
 MACHINES = [
     # {vm: 'Win8.1',
@@ -48,7 +50,7 @@ MOTHER = {#hostname: '10.26.14.13',
           username: 'kisiel',
           password: 'qE2y2Uc9Gz'}
 
-# A remote machine.
+# A remote machine, define ssh
 class RemoteMachine < OpenStruct
   def ssh!(cmd, timeout = 180)
     puts "[#{self.hostname}] #{cmd}"
@@ -69,6 +71,7 @@ class RemoteMachine < OpenStruct
 
   protected
 
+# Show stdout and stderr with ssh
   def show_ssh_result(result)
     stdout_prefix = "==>"
     stderr_prefix = "1=>"
@@ -81,58 +84,66 @@ end
 class TestMachine < RemoteMachine
   def initialize(mother, config)
     @mother = mother
-    super(config)     #arg->org.meth
+    super(config)
   end
 
+#Load a clean snapshot and its start
   def setup!
     clear
     start(wait: 120)
   end
 
+#Stop Virtual Machine
   def stop!
     @mother.ssh!("VBoxManage controlvm #{self.vm} poweroff")
   end
-#TODO:  zmiana nazw, wyci¹gniêcie metody
+
+#Verify that the target snapshot is running
   def running?
     output = @mother.ssh!('VBoxManage list runningvms | cut -d \" -f2').stdout
     true if output[self.vm]
   end
 
+#Making a snapshot in the case of failing tests
   def take_snapshot!(snapshot_name)
     @mother.ssh!("VBoxManage snapshot #{self.vm} take #{snapshot_name}")
   end
 
   protected
 
+#Stop if target machine is running
   def clear
     stop! if running?
     restore_from(self.initial_snapshot)
   end
 
+#Restore snapshot with test environment
   def restore_from(snapshot)
     @mother.ssh!("VBoxManage snapshot #{self.vm} restore #{snapshot}")
   end
 
+#Check server drb status, start target Virtual Machine
   def start(options = {})
     @mother.ssh!("VBoxManage startvm #{self.vm}")
     wait = options[:wait].to_i
-    wait_for_ssh(wait) if wait > 0
+    RemoteTestSuite.new(test_machine).current_server(wait) if wait > 0
   end
 
-  def wait_for_ssh(wait)
-    Timeout::timeout(wait) do
-      while true
-        ignore_exceptions do
-          ssh!('echo', 40)
-          return
-        end
-      end
-    end
-  rescue Timeout::Error
-    raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
-  rescue Errno::ETIMEDOUT
-    raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
-  end
+   # def wait_for_ssh(wait)
+   #   Timeout::timeout(wait) do
+   #     while true
+   #       ignore_exceptions do
+   #         ssh!('echo', 40)
+   #         return
+   #       end
+   #     end
+   #   end
+   # rescue Timeout::Error
+   #   raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
+   # rescue Errno::ETIMEDOUT
+   #   raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
+   # end
+
 
   def ignore_exceptions
     yield
@@ -143,15 +154,33 @@ end
 # A suite of tests to run on a remote test machine.
 class RemoteTestSuite
 
-  # Requires DRb sevice to be started.
+# Requires DRb sevice to be started.
   def initialize(test_machine)
     @test_vm = test_machine
     @server = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
   end
 
+#Check current drb server
+  def current_server(wait=40)
+    Timeout::timeout(wait) do
+      begin
+        drb = Thread.current['DRb']
+        server = (drb && drb['server']) ? drb['server'] : @server
+        raise DRbServerNotFound unless server
+        return "Current running server: #{server}"
+      end
+    end
+  rescue Timeout::Error
+    raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
+  rescue Errno::ETIMEDOUT
+    raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
+  end
+
+
+#Start Virtual Machine with initial snapshot, copy and run all dependency files necessary for testing
   def run!
-    #@test_vm.setup!
-    run_all_tests
+    @test_vm.setup!
+    run_all_test_dependency
   end
 
 
@@ -159,19 +188,22 @@ class RemoteTestSuite
   # - Refactor code (w/ m¹dry i sympatyczny Marcin).
   # - sprawdzanie czy dzia³a server za pomoc¹ DRB
   # - komentarze(cel dzia³ania, jak)
+  # - zmiana nazw
 
-  def run_all_tests
-    setup_upload(@test_vm.install_dir)
+#Setup all method necessary for testing
+  def run_all_test_dependency
+    copy_proton_exe(@test_vm.install_dir)
     install_proton
     copy_specs(@test_vm.spec_dir)
-    run_tests
+    run_spec_tests
   end
 
   def setup_base_dir
     File.join(File.dirname(__FILE__), "..")
   end
 
-  def setup_upload(target_dir)
+#Copy proton exe from install dir(base_dir), and throwing to the target folder
+  def copy_proton_exe(target_dir)
     base_dir = setup_base_dir
     setup = File.join(base_dir, 'install/**/*')
     Dir.glob(setup) do |source_path|
@@ -180,11 +212,12 @@ class RemoteTestSuite
     end
   end
 
-
+#Install proton in silent mode, omission windows during installation
   def install_proton
     @server.exec(" #{@test_vm.install_dir}\\install\\Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
   end
 
+#Copy specs from install dir(base_dir), and throwing to the target folder.Omission folder - copying only the files using File.file?()
   def copy_specs(target_dir)
     base_dir = setup_base_dir
     specfiles = File.join(base_dir, 'spec/**/*')
@@ -197,7 +230,8 @@ class RemoteTestSuite
     end
   end
 
-  def run_tests
+#Run rspec tests, when exit code != take snapshot, print stdout and stderr
+  def run_spec_tests
      status = @server.exec("rspec #{@test_vm.spec_dir}\\spec\\firebird_wizzard_spec.rb")
      if status.exit_code == 0
        puts "Tests passed, snapshot is unnecessary"
@@ -209,6 +243,7 @@ class RemoteTestSuite
   end
 end
 
+# Class specifies the buffer size of transmitted files, defines variables for target_path and IO mode (read,binary)
 class FileTransfer
   include DRb::DRbUndumped
 
@@ -235,6 +270,29 @@ test = RemoteTestSuite.new(test_machines[0])
 test.run!
 exit
 
+
+##################################################
+
+
+# DRb.start_service
+# @server = DRbObject.new_with_uri("druby://localhost:8989")
+#
+#   def current_server(wait=40)
+#     Timeout::timeout(wait) do
+#     begin
+#       drb = Thread.current['DRb']
+#       server = (drb && drb['server']) ? drb['server'] : @server
+#       raise DRbServerNotFound unless server
+#       return "Current running server: #{server}"
+#       end
+#     end
+#     rescue Timeout::Error
+#     raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
+#     rescue Errno::ETIMEDOUT
+#     raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
+#     end
+#
+# puts current_server
 
 
 

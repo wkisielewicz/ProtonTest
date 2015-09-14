@@ -5,21 +5,21 @@ require 'rspec/core'
 require 'fileutils'
 require 'open3'
 require 'ostruct'
+require 'io/wait'
+
 
 URI = 'druby://0.0.0.0:8989'
 
+
 class TestServer
 
-  # Runs command 'cmd' and returns instance containig:
-  # - exit_status
-  # - stdout
-  # - stderr
-  # Raises an error if exit code isn't zero.
+#Exec who returns the exception
   def exec!(cmd)
     status = exec(cmd)
     raise "Command failed with exit status #{status.exitstatus}" unless status.exitstatus == 0
   end
 
+#Exec who returns to standard output, will perform a test
   def exec(cmd)
     Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
       status = wait_thr.value # Process::Status object returned.
@@ -27,6 +27,7 @@ class TestServer
     end
   end
 
+#Checks if a folder exists, create destination folder, output buffer of lost files
   def upload(transfer)
     puts transfer.target_path
     FileUtils.mkdir_p(File.dirname(transfer.target_path))

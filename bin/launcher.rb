@@ -8,6 +8,8 @@ require 'ssh-exec'
 require 'pathname'
 require 'io/wait'
 
+
+#Access data defining attributes for each virtual machine
 MACHINES = [
     # {vm: 'Win8.1',
     #          initial_snapshot: 'test_firebird_2_5',
@@ -50,7 +52,7 @@ MOTHER = {#hostname: '10.26.14.13',
           username: 'kisiel',
           password: 'qE2y2Uc9Gz'}
 
-# A remote machine, define ssh
+# A remote machine, define ssh, raise exception when commands failed
 class RemoteMachine < OpenStruct
   def ssh!(cmd, timeout = 180)
     puts "[#{self.hostname}] #{cmd}"

@@ -44,7 +44,5 @@ class TestServer
 end
 
 FRONT_OBJECT = TestServer.new
-DRb.start_service(URI, FRONT_OBJECT)
+DRb.start_service(URI, FRONT_OBJECT, verbose: true)
 DRb.thread.join
-
-

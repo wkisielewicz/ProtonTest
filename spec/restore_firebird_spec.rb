@@ -41,7 +41,8 @@ describe 'Backup Firebird', :type => :feature, :js => true do
     page.find('#main-view-restore-wizard-accepted').click
     sleep(inspection_time=5)
 
-    #page.attach_file 'file', './fixturies/files/plik-ratunkowy.prcv'
+    page.attach_file 'file', './fixturies/files/plik-ratunkowy.prcv'
+    page.uploadFile('input[name=upfile]', filename);
 
    #page.find('file').click
     #page.driver.render('./firebird_restore.png', :full => true)

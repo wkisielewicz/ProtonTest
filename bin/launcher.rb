@@ -39,7 +39,7 @@ MACHINES = [
     #         password: 'Passw0rd!'}
 
     {vm: 'Win7',
-     initial_snapshot: 'server_test4',
+     initial_snapshot: 'server_test5',
      hostname: '192.168.0.111',
      #hostname: '10.26.14.20',
      username: 'IEUser',
@@ -102,8 +102,8 @@ class TestMachine < RemoteMachine
 
 #Verify that the target snapshot is running
   def running?
-    output = @mother.ssh!('VBoxManage list runningvms | cut -d \" -f2').stdout
-    true if output[self.vm]
+    output = @mother.ssh!('VBoxManage list runningvms').stdout
+    true if output["\"#{self.vm}\""]
   end
 
 #Making a snapshot in the case of failing tests
@@ -111,7 +111,7 @@ class TestMachine < RemoteMachine
     @mother.ssh!("VBoxManage snapshot #{self.vm} take #{snapshot_name}")
   end
 
-  protected
+  # protected
 
 #Stop if target machine is running
   def clear
@@ -128,24 +128,25 @@ class TestMachine < RemoteMachine
   def start(options = {})
     @mother.ssh!("VBoxManage startvm #{self.vm}")
     wait = options[:wait].to_i
-    RemoteTestSuite.new(test_machine).current_server(wait) if wait > 0
+    #RemoteTestSuite.new(test_machine).current_server(wait) if wait > 0
+    wait_for_server(wait) if wait > 0
   end
 
-   # def wait_for_ssh(wait)
-   #   Timeout::timeout(wait) do
-   #     while true
-   #       ignore_exceptions do
-   #         ssh!('echo', 40)
-   #         return
-   #       end
-   #     end
-   #   end
-   # rescue Timeout::Error
-   #   raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
-   # rescue Errno::ETIMEDOUT
-   #   raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
-   # end
-
+  def wait_for_server(wait = 30)
+    server = DRbObject.new_with_uri("druby://#{self.hostname}:8989")
+    Timeout::timeout(wait) do
+      while true
+        ignore_exceptions do
+          return if server.ready?
+          sleep(1)
+        end
+      end
+    end
+  rescue Timeout::Error
+    raise Timeout::Error, "VM's test server not ready within #{wait}s"
+  rescue Errno::ETIMEDOUT
+    raise Timeout::Error, "VM's test server not ready within #{wait}s"
+  end
 
   def ignore_exceptions
     yield
@@ -160,22 +161,7 @@ class RemoteTestSuite
   def initialize(test_machine)
     @test_vm = test_machine
     @server = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
-  end
 
-#Check current drb server
-  def current_server(wait=40)
-    Timeout::timeout(wait) do
-      begin
-        drb = Thread.current['DRb']
-        server = (drb && drb['server']) ? drb['server'] : @server
-        raise DRbServerNotFound unless server
-        return "Current running server: #{server}"
-      end
-    end
-  rescue Timeout::Error
-    raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
-  rescue Errno::ETIMEDOUT
-    raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
   end
 
 
@@ -186,11 +172,11 @@ class RemoteTestSuite
   end
 
 
-  # Main TODO
-  # - Refactor code (w/ m¹dry i sympatyczny Marcin).
-  # - sprawdzanie czy dzia³a server za pomoc¹ DRB
-  # - komentarze(cel dzia³ania, jak)
-  # - zmiana nazw
+# Main TODO
+# - Refactor code (w/ m¹dry i sympatyczny Marcin).
+# - sprawdzanie czy dzia³a server za pomoc¹ DRB
+# - komentarze(cel dzia³ania, jak)
+# - zmiana nazw
 
 #Setup all method necessary for testing
   def run_all_test_dependency
@@ -234,14 +220,14 @@ class RemoteTestSuite
 
 #Run rspec tests, when exit code != take snapshot, print stdout and stderr
   def run_spec_tests
-     status = @server.exec("rspec #{@test_vm.spec_dir}\\spec\\firebird_wizzard_spec.rb")
-     if status.exit_code == 0
-       puts "Tests passed, snapshot is unnecessary"
-     else
-       @test_vm.take_snapshot!("test_failure")
-       puts status.stdout
-       puts status.stderr
-     end
+    status = @server.exec("rspec #{@test_vm.spec_dir}\\spec\\firebird_wizzard_spec.rb")
+    if status.exit_code == 0
+      puts "Tests passed, snapshot is unnecessary"
+    else
+      @test_vm.take_snapshot!("test_failure")
+      puts status.stdout
+      puts status.stderr
+    end
   end
 end
 
@@ -267,35 +253,11 @@ end
 
 DRb.start_service
 
-test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config)}
-test = RemoteTestSuite.new(test_machines[0])
-test.run!
-exit
+ test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config)}
+ test = RemoteTestSuite.new(test_machines[0])
+ test.run!
+ exit
 
-
-##################################################
-
-
-# DRb.start_service
-# @server = DRbObject.new_with_uri("druby://localhost:8989")
-#
-#   def current_server(wait=40)
-#     Timeout::timeout(wait) do
-#     begin
-#       drb = Thread.current['DRb']
-#       server = (drb && drb['server']) ? drb['server'] : @server
-#       raise DRbServerNotFound unless server
-#       return "Current running server: #{server}"
-#       end
-#     end
-#     rescue Timeout::Error
-#     raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
-#     rescue Errno::ETIMEDOUT
-#     raise Timeout::Error, "VM's ssh server not ready within #{wait}s"
-#     end
-#
-# puts current_server
-
-
+#local_machine = TestMachine.new(RemoteMachine.new(MOTHER), MACHINES.first.merge(hostname: "localhost"))
 
 

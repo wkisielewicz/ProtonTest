@@ -10,7 +10,6 @@ describe 'copy firebird', :type => :feature, :js => true do
 
   it 'correct copy firebird' do
     visit('http://localhost:10555/')
-    #find('btn-primary').click
     page.find('button.btn-primary.btn').click
     expect(page).to have_content 'wykonywanie'
     page.driver.render('./screenshot/backup_firebird.png', :full => true)

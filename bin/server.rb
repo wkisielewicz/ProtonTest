@@ -12,6 +12,9 @@ URI = 'druby://0.0.0.0:8989'
 
 
 class TestServer
+  def ready?
+    true
+  end
 
 #Exec who returns the exception
   def exec!(cmd)

@@ -11,36 +11,46 @@ require 'io/wait'
 
 #Access data defining attributes for each virtual machine
 MACHINES = [
-     {vm: 'Win8.1',
-              initial_snapshot: 'test_firebird_2_0_server',
-              hostname: '10.26.14.19',
-              hostname: '192.168.0.113',
-              username: 'IEUser',
-              password: 'Passw0rd!',
-              install_dir: 'C:\\ProtonTest',
-              spec_dir: 'C:\\ProtonTest'}]
-    # {vm: 'Vista',
+     # {vm: 'Win8.1',
+     #          #initial_snapshot: 'test_firebird_2_0_server',
+     #          initial_snapshot: 'test_firebird_2_5_server',
+     #          hostname: '192.168.0.113',
+     #          username: 'IEUser',
+     #          password: 'Passw0rd!',
+     #          install_dir: 'C:\\ProtonTest',
+     #          spec_dir: 'C:\\ProtonTest'}
+    # {vm: 'Vista', <-- no active
     #         initial_snapshot: 'test_firebird_2_5',
     #         hostname:  '192.168.0.119',
     #         username: 'IEUser',
-    #         password: 'Passw0rd!'}
-    # {vm: 'Win8',
-    #         initial_snapshot: 'test_firebird_2_5',
-    #         hostname:  '192.168.0.120',
-    #         username: 'IEUser',
-    #         password: 'Passw0rd!'}
+    #         password: 'Passw0rd!',
+    #         install_dir: 'C:\\ProtonTest',
+    #         spec_dir: 'C:\\ProtonTest'}
+     {vm: 'Win8',
+             initial_snapshot: 'test_firebird_2_5_server',
+             #initial_snapshot: 'test_firebird_2_0_server',
+             hostname:  '192.168.0.120',
+             username: 'IEUser',
+             password: 'Passw0rd!',
+             install_dir: 'C:\\ProtonTest',
+             spec_dir: 'C:\\ProtonTest'}]
     # {vm: 'WindowsServer2012',
-    #         initial_snapshot: 'test_firebird_2_5',
-    #         hostname:  '192.168.0.', <--- wpisz adres
+    #         initial_snapshot: 'test_firebird_2_5_server',
+    #         #initial_snapshot: 'test_firebird_2_0_server',
+    #         hostname:  '192.168.0.117',
     #         username: 'winserver',
-    #         password: 'Passw0rd!'}
+    #         password: 'Passw0rd!',
+    #         install_dir: 'C:\\ProtonTest',
+    #         spec_dir: 'C:\\ProtonTest' }
     # {vm: 'WinServer2008',
     #         initial_snapshot: 'test_firebird_2_5',
     #         hostname:  '192.168.0.121',
     #         username: 'Administrator',
-    #         password: 'Passw0rd!'}
+    #         password: 'Passw0rd!',
+    #         install_dir: 'C:\\ProtonTest',
+    #         spec_dir: 'C:\\ProtonTest'}
 
-    # {vm: 'Win7',
+    # {vm: 'Win7', <--no active
     #  initial_snapshot: 'firebird_2_0_server',
     #  hostname: '192.168.0.111',
     #  #hostname: '10.26.14.20',
@@ -223,7 +233,7 @@ class RemoteTestSuite
 
 #Run rspec tests, when exit code != take snapshot, print stdout and stderr
   def run_spec_tests
-    status = @server.exec("rspec #{@test_vm.spec_dir}\\spec\\firebird_wizzard_spec.rb")
+    status = @server.exec("rspec #{@test_vm.spec_dir}\\spec\\my_example_spec.rb")
     if status.exit_code == 0
       puts "Tests passed, snapshot is unnecessary"
     else

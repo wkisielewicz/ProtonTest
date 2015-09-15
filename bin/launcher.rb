@@ -11,12 +11,14 @@ require 'io/wait'
 
 #Access data defining attributes for each virtual machine
 MACHINES = [
-    # {vm: 'Win8.1',
-    #          initial_snapshot: 'test_firebird_2_5',
-    #          hostname: '10.26.14.19',
-    #          hostname: '192.168.0.113'
-    #          username: 'IEUser',
-    #          password: 'Passw0rd!'}
+     {vm: 'Win8.1',
+              initial_snapshot: 'test_firebird_2_0_server',
+              hostname: '10.26.14.19',
+              hostname: '192.168.0.113',
+              username: 'IEUser',
+              password: 'Passw0rd!',
+              install_dir: 'C:\\ProtonTest',
+              spec_dir: 'C:\\ProtonTest'}]
     # {vm: 'Vista',
     #         initial_snapshot: 'test_firebird_2_5',
     #         hostname:  '192.168.0.119',
@@ -38,14 +40,14 @@ MACHINES = [
     #         username: 'Administrator',
     #         password: 'Passw0rd!'}
 
-    {vm: 'Win7',
-     initial_snapshot: 'server_test5',
-     hostname: '192.168.0.111',
-     #hostname: '10.26.14.20',
-     username: 'IEUser',
-     password: 'Passw0rd!',
-     install_dir: 'C:\\ProtonTest',
-     spec_dir: 'C:\\ProtonTest'}]
+    # {vm: 'Win7',
+    #  initial_snapshot: 'firebird_2_0_server',
+    #  hostname: '192.168.0.111',
+    #  #hostname: '10.26.14.20',
+    #  username: 'IEUser',
+    #  password: 'Passw0rd!',
+    #  install_dir: 'C:\\ProtonTest',
+    #  spec_dir: 'C:\\ProtonTest'}]
 
 MOTHER = {#hostname: '10.26.14.13',
           hostname: '192.168.0.101',
@@ -128,18 +130,20 @@ class TestMachine < RemoteMachine
   def start(options = {})
     @mother.ssh!("VBoxManage startvm #{self.vm}")
     wait = options[:wait].to_i
-    #RemoteTestSuite.new(test_machine).current_server(wait) if wait > 0
     wait_for_server(wait) if wait > 0
   end
 
   def wait_for_server(wait = 30)
-    server = DRbObject.new_with_uri("druby://#{self.hostname}:8989")
+    url = "druby://#{self.hostname}:8989"
+    puts "Waiting for #{url}..."
+    server = DRbObject.new_with_uri(url)
     Timeout::timeout(wait) do
       while true
-        ignore_exceptions do
+        # ignore_exceptions do
+          puts "wait"
           return if server.ready?
           sleep(1)
-        end
+        # end
       end
     end
   rescue Timeout::Error
@@ -161,7 +165,6 @@ class RemoteTestSuite
   def initialize(test_machine)
     @test_vm = test_machine
     @server = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
-
   end
 
 
@@ -253,11 +256,19 @@ end
 
 DRb.start_service
 
- test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config)}
- test = RemoteTestSuite.new(test_machines[0])
- test.run!
- exit
+   test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config)}
+    test = RemoteTestSuite.new(test_machines[0])
+    test.run!
+    exit
 
+
+# remote_machine = TestMachine.new(RemoteMachine.new(MOTHER), MACHINES.first)
+# remote_machine.wait_for_server(5)
+#  s = DRbObject.new_with_uri("druby://192.168.0.111:8989")
+#  puts s.ready?
 #local_machine = TestMachine.new(RemoteMachine.new(MOTHER), MACHINES.first.merge(hostname: "localhost"))
 
+
+
+DRb.stop_service
 

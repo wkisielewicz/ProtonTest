@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="fe62c69d-b7b9-4057-a367-fc3f310663c7" name="Default" comment="Remove comments">
+    <list default="true" id="fe62c69d-b7b9-4057-a367-fc3f310663c7" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/launcher.rb" afterPath="$PROJECT_DIR$/bin/launcher.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bin/server.rb" afterPath="$PROJECT_DIR$/bin/server.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -19,14 +20,14 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/ProtonTest@Run_spec__backup_firebird_spec___ProtonTest.coverage" NAME="Run spec 'backup_firebird_spec': ProtonTest Coverage Results" MODIFIED="1441459073417" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ProtonTest" />
     <SUITE FILE_PATH="coverage/ProtonTest@launcher_test.coverage" NAME="launcher_test Coverage Results" MODIFIED="1441979275885" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bin" MODULE_NAME="ProtonTest" />
-    <SUITE FILE_PATH="coverage/ProtonTest@launcher.coverage" NAME="launcher Coverage Results" MODIFIED="1442308836064" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bin" MODULE_NAME="ProtonTest" />
+    <SUITE FILE_PATH="coverage/ProtonTest@launcher.coverage" NAME="launcher Coverage Results" MODIFIED="1442325928434" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bin" MODULE_NAME="ProtonTest" />
     <SUITE FILE_PATH="coverage/ProtonTest@Backup_Firebird_correct_backup_for_firebird__ProtonTest.coverage" NAME="Backup Firebird correct backup for firebird: ProtonTest Coverage Results" MODIFIED="1441981941152" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ProtonTest" />
     <SUITE FILE_PATH="coverage/ProtonTest@server.coverage" NAME="server Coverage Results" MODIFIED="1442309323418" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bin" MODULE_NAME="ProtonTest" />
     <SUITE FILE_PATH="coverage/ProtonTest@launcher_test__1_.coverage" NAME="launcher_test (1) Coverage Results" MODIFIED="1440621236793" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bin" MODULE_NAME="ProtonTest" />
     <SUITE FILE_PATH="coverage/ProtonTest@Setting_up_Firebird_Wizzard_should_correct_configuration_firebird__ProtonTest.coverage" NAME="Setting up Firebird Wizzard should correct configuration firebird: ProtonTest Coverage Results" MODIFIED="1441474502106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ProtonTest" />
     <SUITE FILE_PATH="coverage/ProtonTest@server_test.coverage" NAME="server_test Coverage Results" MODIFIED="1441955214932" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bin" MODULE_NAME="ProtonTest" />
     <SUITE FILE_PATH="coverage/ProtonTest@Run_spec__firebird_wizzard_spec___ProtonTest.coverage" NAME="Run spec 'firebird_wizzard_spec': ProtonTest Coverage Results" MODIFIED="1441459177836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ProtonTest" />
-    <SUITE FILE_PATH="coverage/ProtonTest@IRB_console__ProtonTest.coverage" NAME="IRB console: ProtonTest Coverage Results" MODIFIED="1442309037465" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ProtonTest" />
+    <SUITE FILE_PATH="coverage/ProtonTest@IRB_console__ProtonTest.coverage" NAME="IRB console: ProtonTest Coverage Results" MODIFIED="1442311625239" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ProtonTest" />
     <SUITE FILE_PATH="coverage/ProtonTest@Run_spec__change_harmonogram_spec___ProtonTest.coverage" NAME="Run spec 'change_harmonogram_spec': ProtonTest Coverage Results" MODIFIED="1441459106198" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ProtonTest" />
     <SUITE FILE_PATH="coverage/ProtonTest@launcher__1_.coverage" NAME="launcher (1) Coverage Results" MODIFIED="1442231297699" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/bin" MODULE_NAME="ProtonTest" />
   </component>
@@ -39,21 +40,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="launcher.rb" pinned="false" current-in-tab="false">
+      <file leaf-file-name="launcher.rb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bin/launcher.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="262" column="0" selection-start-line="262" selection-start-column="0" selection-end-line="262" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.6674365">
+              <caret line="25" column="36" selection-start-line="25" selection-start-column="36" selection-end-line="25" selection-end-column="36" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="server.rb" pinned="false" current-in-tab="true">
+      <file leaf-file-name="server.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bin/server.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.8257143">
-              <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -257,7 +258,7 @@
       <recent name="C:\Users\kisiel\Desktop\ProtonTest\bin" />
     </key>
   </component>
-  <component name="RunManager" selected="IRB console.IRB console: ProtonTest">
+  <component name="RunManager" selected="Ruby.launcher">
     <configuration default="false" name="Run spec 'firebird_wizzard_spec': ProtonTest" type="RSpecRunConfigurationType" factoryName="RSpec" temporary="true">
       <predefined_log_file id="RUBY_RSPEC" enabled="true" />
       <module name="ProtonTest" />
@@ -519,9 +520,8 @@
       <item index="6" class="java.lang.String" itemvalue="Ruby.launcher (1)" />
     </list>
     <recent_temporary>
-      <list size="2">
+      <list size="1">
         <item index="0" class="java.lang.String" itemvalue="IRB console.IRB console: ProtonTest" />
-        <item index="1" class="java.lang.String" itemvalue="Ruby.launcher (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -728,7 +728,13 @@
       <option name="project" value="LOCAL" />
       <updated>1442309961517</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="add method ready">
+      <created>1442309996789</created>
+      <option name="number" value="00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1442309996789</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TodoView">
@@ -753,7 +759,7 @@
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24743778" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39939487" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.42813918" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30257186" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32980332" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -798,7 +804,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Refactoring." />
     <MESSAGE value="More refactoring and cleanup." />
     <MESSAGE value="Fix bug in TestMachine#start.&#10;Increase timeout for ssh! in wait_for_ssh.&#10;Add test eval functionality to DRb server." />
     <MESSAGE value="Test and unsafe code executing commands on DRb server." />
@@ -823,7 +828,8 @@
     <MESSAGE value="Add comments" />
     <MESSAGE value="Add comments &lt; ostruct" />
     <MESSAGE value="Find vms name in quotes. Check server ready" />
-    <option name="LAST_COMMIT_MESSAGE" value="Find vms name in quotes. Check server ready" />
+    <MESSAGE value="add method ready" />
+    <option name="LAST_COMMIT_MESSAGE" value="add method ready" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1142,18 +1148,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bin/launcher.rb">
+    <entry file="file://$PROJECT_DIR$/bin/server.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="262" column="0" selection-start-line="262" selection-start-column="0" selection-end-line="262" selection-end-column="0" />
+          <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bin/server.rb">
+    <entry file="file://$PROJECT_DIR$/bin/launcher.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.8257143">
-          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.6674365">
+          <caret line="25" column="36" selection-start-line="25" selection-start-column="36" selection-end-line="25" selection-end-column="36" />
           <folding />
         </state>
       </provider>

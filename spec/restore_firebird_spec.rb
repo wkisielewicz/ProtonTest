@@ -21,8 +21,7 @@ describe 'Backup Firebird', :type => :feature, :js => true do
     fill_in 'main-view-restore-wizard-data-config-database-login',                :with => 'SYSDBA'
     fill_in 'main-view-restore-wizard-data-config-database-password',             :with => 'masterkey'
     page.find('div.col-sm-7 > button.btn-primary.btn').click
-    #expect(page).to have_content 'Success'
-
+    #
     fill_in 'main-view-restore-wizard-data-config-passphrase1',      :with => 'test'
     fill_in 'main-view-restore-wizard-data-config-passphrase2',      :with => 'test'
     page.find('div.col-sm-7 > button.btn-primary.btn').click

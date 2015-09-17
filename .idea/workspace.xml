@@ -47,8 +47,8 @@
       <file leaf-file-name="launcher.rb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bin/launcher.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.72511846">
-              <caret line="154" column="21" selection-start-line="154" selection-start-column="21" selection-end-line="154" selection-end-column="21" />
+            <state vertical-scroll-proportion="0.29541865">
+              <caret line="17" column="37" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
               <folding />
             </state>
           </provider>
@@ -167,10 +167,10 @@
         <option value="$PROJECT_DIR$/bin/launcher_test.rb" />
         <option value="$PROJECT_DIR$/bin/server.rb" />
         <option value="$PROJECT_DIR$/spec/backup_firebird_spec.rb" />
-        <option value="$PROJECT_DIR$/bin/launcher.rb" />
         <option value="$PROJECT_DIR$/spec/restore_firebird_spec.rb" />
         <option value="$PROJECT_DIR$/spec/test_spec.rb" />
         <option value="$PROJECT_DIR$/spec/firebird_wizzard_spec.rb" />
+        <option value="$PROJECT_DIR$/bin/launcher.rb" />
       </list>
     </option>
   </component>
@@ -872,7 +872,13 @@
       <option name="project" value="LOCAL" />
       <updated>1442475920646</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="change - do snapshot">
+      <created>1442476007122</created>
+      <option name="number" value="00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1442476007122</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TodoView">
@@ -943,7 +949,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="false" />
-    <MESSAGE value="Uncomment file utils, add require 'fileutils'" />
     <MESSAGE value="Set up basedir" />
     <MESSAGE value="Remove comments" />
     <MESSAGE value="add new methods, setup_upload, copy_specs, rewrite install_proton" />
@@ -968,7 +973,8 @@
     <MESSAGE value="add tests lines" />
     <MESSAGE value="create account" />
     <MESSAGE value="file to setup environment for aws" />
-    <option name="LAST_COMMIT_MESSAGE" value="file to setup environment for aws" />
+    <MESSAGE value="change - do snapshot" />
+    <option name="LAST_COMMIT_MESSAGE" value="change - do snapshot" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1340,8 +1346,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bin/launcher.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.72511846">
-          <caret line="154" column="21" selection-start-line="154" selection-start-column="21" selection-end-line="154" selection-end-column="21" />
+        <state vertical-scroll-proportion="0.29541865">
+          <caret line="17" column="37" selection-start-line="17" selection-start-column="37" selection-end-line="17" selection-end-column="37" />
           <folding />
         </state>
       </provider>

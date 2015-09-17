@@ -15,7 +15,7 @@ MACHINES = [
                #initial_snapshot: 'test_firebird_2_0_serverjs',
                initial_snapshot: 'test_firebird_2_5_serverjs',
                #hostname: '192.168.0.113',
-               hostname: '10.26.14.15',
+               hostname: '10.26.14.23',
                username: 'IEUser',
                password: 'Passw0rd!',
                install_dir: 'C:\\ProtonTest',

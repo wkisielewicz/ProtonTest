@@ -8,6 +8,8 @@ require 'ssh-exec'
 require 'pathname'
 require 'io/wait'
 
+ENV['HTTP_PROXY']='http://localhost:8989'
+
 
 #Access data defining attributes for each virtual machine
 MACHINES = [
@@ -176,7 +178,9 @@ class RemoteTestSuite
 # Requires DRb sevice to be started.
   def initialize(test_machine)
     @test_vm = test_machine
-    @server = DRbObject.new_with_uri("druby://#{@test_vm.hostname}:8989")
+    druby_url = "druby://#{@test_vm.hostname}:8989"
+    puts "Running test through #{druby_url}"
+    @server = DRbObject.new_with_uri(druby_url)
   end
 
 
@@ -188,17 +192,18 @@ class RemoteTestSuite
 
 
 # Main TODO
-# - Refactor code (w/ m¹dry i sympatyczny Marcin).
-# - sprawdzanie czy dzia³a server za pomoc¹ DRB
-# - komentarze(cel dzia³ania, jak)
+# - Refactor code (w/ mï¿½dry i sympatyczny Marcin).
+# - sprawdzanie czy dziaï¿½a server za pomocï¿½ DRB
+# - komentarze(cel dziaï¿½ania, jak)
 # - zmiana nazw
 
 #Setup all method necessary for testing
   def run_all_test_dependency
-    copy_proton_exe(@test_vm.install_dir)
-    install_proton
-    copy_specs(@test_vm.spec_dir)
-    run_spec_tests
+
+     copy_proton_exe(@test_vm.install_dir)
+     install_proton
+     copy_specs(@test_vm.spec_dir)
+     run_spec_tests
   end
 
   def setup_base_dir
@@ -211,10 +216,12 @@ class RemoteTestSuite
     setup = File.join(base_dir, 'install/**/*')
     Dir.glob(setup) do |source_path|
       target_path = File.join(target_dir, Pathname.new(source_path).relative_path_from(Pathname.new(base_dir)).to_s)
+      if File.file?(source_path)
+        puts "#{source_path} => #{target_path}"
       @server.upload(FileTransfer.new(source_path, target_path))
     end
   end
-
+end
 #Install proton in silent mode, omission windows during installation
   def install_proton
     @server.exec(" #{@test_vm.install_dir}\\install\\Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
@@ -267,18 +274,20 @@ class FileTransfer
   end
 end
 
-DRb.start_service
+DRb.start_service("druby://10.26.14.15:0") # TODO: Detect ip.
+puts DRb.current_server.uri
 
    test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config)}
-    test = RemoteTestSuite.new(test_machines[0])
-    test.run!
+   test = RemoteTestSuite.new(test_machines[0])
+   test.run!
+   #test.copy_proton_exe("C:\\__ProtonTest")
     exit
 
 
-# remote_machine = TestMachine.new(RemoteMachine.new(MOTHER), MACHINES.first)
+#remote_machine = TestMachine.new(RemoteMachine.new(MOTHER), MACHINES.first)
 # remote_machine.wait_for_server(5)
-#  s = DRbObject.new_with_uri("druby://192.168.0.111:8989")
-#  puts s.ready?
+# s = DRbObject.new_with_uri("druby://192.168.0.111:8989")
+# puts s.ready?
 #local_machine = TestMachine.new(RemoteMachine.new(MOTHER), MACHINES.first.merge(hostname: "localhost"))
 
 

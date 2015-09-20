@@ -13,7 +13,7 @@ require 'io/wait'
 MACHINES = [
       {vm: 'Win8.1',
                #initial_snapshot: 'test_firebird_2_0_serverjs',
-               initial_snapshot: 'test_firebird_2_5_serverjs',
+               initial_snapshot: 'test_2_5',
                #hostname: '192.168.0.113',
                hostname: '10.26.14.23',
                username: 'IEUser',
@@ -100,7 +100,8 @@ end
 class TestMachine < RemoteMachine
   def initialize(mother, config)
     @mother = mother
-    super(config)
+    super(config)  #Super wywo³uje metodê rodzica o tej samej nazwie, z tymi samymi argumentami.
+                  # Jest to bardzo przydatne do wykorzystania na odziedziczonych klasach.
   end
 
 #Load a clean snapshot and its start
@@ -267,12 +268,14 @@ class FileTransfer
   end
 end
 
-DRb.start_service
+DRb.start_service("druby://10.26.14.15:0") # TODO: Detect ip.
+puts DRb.current_server.uri
 
-   test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config)}
-    test = RemoteTestSuite.new(test_machines[0])
-    test.run!
-    exit
+test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config)}
+test = RemoteTestSuite.new(test_machines[0])
+#test.copy_proton_exe("C:\\__ProtonTest")
+test.run!
+exit
 
 
 # remote_machine = TestMachine.new(RemoteMachine.new(MOTHER), MACHINES.first)

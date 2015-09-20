@@ -1,0 +1,3 @@
+{:databases      [:oracle]
+ :max-total-size 512000                                     ; MB
+ :desc           "OR-M"}

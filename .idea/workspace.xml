@@ -6,9 +6,6 @@
       <change type="DELETED" beforePath="C:\Users\kisiel\Desktop\ProtonTest\spec\screenshot\file.png" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\kisiel\Desktop\ProtonTest\spec\screenshot\firebird_restore.png" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\kisiel\Desktop\ProtonTest\spec\screenshot\firebird_wizzard.png" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/screenshot/backup_firebird.png" afterPath="$PROJECT_DIR$/screenshot/backup_firebird.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ProtonTest.iml" afterPath="$PROJECT_DIR$/.idea/ProtonTest.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/backup_firebird_spec.rb" afterPath="$PROJECT_DIR$/spec/backup_firebird_spec.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/change_harmonogram_spec.rb" afterPath="$PROJECT_DIR$/spec/change_harmonogram_spec.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/firebird_wizzard_spec.rb" afterPath="$PROJECT_DIR$/spec/firebird_wizzard_spec.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/protontest.rb" afterPath="$PROJECT_DIR$/spec/protontest.rb" />
@@ -941,7 +938,13 @@
       <option name="project" value="LOCAL" />
       <updated>1442762691029</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="create before each do">
+      <created>1442780940611</created>
+      <option name="number" value="00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1442780940611</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1012,7 +1015,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="false" />
-    <MESSAGE value="change path in setup_upload" />
     <MESSAGE value="remove comments" />
     <MESSAGE value="popen 3 in server_test, copy only files in launcher_test" />
     <MESSAGE value="add puts cmd in exec" />
@@ -1037,7 +1039,8 @@
     <MESSAGE value="puts current server drb" />
     <MESSAGE value="licenses to proton" />
     <MESSAGE value="new class Account - create account for spec tests" />
-    <option name="LAST_COMMIT_MESSAGE" value="new class Account - create account for spec tests" />
+    <MESSAGE value="create before each do" />
+    <option name="LAST_COMMIT_MESSAGE" value="create before each do" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -9,7 +9,6 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/change_harmonogram_spec.rb" afterPath="$PROJECT_DIR$/spec/change_harmonogram_spec.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/firebird_wizzard_spec.rb" afterPath="$PROJECT_DIR$/spec/firebird_wizzard_spec.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/protontest.rb" afterPath="$PROJECT_DIR$/spec/protontest.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/restore_firebird_spec.rb" afterPath="$PROJECT_DIR$/spec/restore_firebird_spec.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="ProtonTest.iws" />
@@ -100,20 +99,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="protontest.rb" pinned="false" current-in-tab="false">
+      <file leaf-file-name="protontest.rb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/spec/protontest.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
+            <state vertical-scroll-proportion="0.5710594">
               <caret line="13" column="46" selection-start-line="13" selection-start-column="46" selection-end-line="13" selection-end-column="46" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="backup_firebird_spec.rb" pinned="false" current-in-tab="true">
+      <file leaf-file-name="backup_firebird_spec.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/spec/backup_firebird_spec.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.0103359">
+            <state vertical-scroll-proportion="0.0">
               <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
               <folding />
             </state>
@@ -944,7 +943,13 @@
       <option name="project" value="LOCAL" />
       <updated>1442780940611</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="change path to firebird">
+      <created>1442780972976</created>
+      <option name="number" value="00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1442780972976</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1015,7 +1020,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="false" />
-    <MESSAGE value="remove comments" />
     <MESSAGE value="popen 3 in server_test, copy only files in launcher_test" />
     <MESSAGE value="add puts cmd in exec" />
     <MESSAGE value="add exec! i exec in server_test, create new def take snapshot" />
@@ -1040,7 +1044,8 @@
     <MESSAGE value="licenses to proton" />
     <MESSAGE value="new class Account - create account for spec tests" />
     <MESSAGE value="create before each do" />
-    <option name="LAST_COMMIT_MESSAGE" value="create before each do" />
+    <MESSAGE value="change path to firebird" />
+    <option name="LAST_COMMIT_MESSAGE" value="change path to firebird" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1402,18 +1407,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/spec/protontest.rb">
+    <entry file="file://$PROJECT_DIR$/spec/backup_firebird_spec.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="13" column="46" selection-start-line="13" selection-start-column="46" selection-end-line="13" selection-end-column="46" />
+          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/spec/backup_firebird_spec.rb">
+    <entry file="file://$PROJECT_DIR$/spec/protontest.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.0103359">
-          <caret line="23" column="0" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.5710594">
+          <caret line="13" column="46" selection-start-line="13" selection-start-column="46" selection-end-line="13" selection-end-column="46" />
           <folding />
         </state>
       </provider>

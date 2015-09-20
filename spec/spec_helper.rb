@@ -1,9 +1,7 @@
 require 'rspec'
+require 'provision'
 require 'capybara/poltergeist'
 
-
-#require File.expand_path('../boot', __FILE__)
-#require 'rails'
 
 Capybara.javascript_driver = :poltergeist
 
@@ -25,7 +23,6 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
-  #Rails.root.join('plik-ratunkowy.prcv')
 
 
 

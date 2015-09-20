@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fe62c69d-b7b9-4057-a367-fc3f310663c7" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/licenses/FB-S.edn" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/licenses/OR-M.edn" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/licenses/OR-S.edn" />
       <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/protontest.rb" />
       <change type="DELETED" beforePath="C:\Users\kisiel\Desktop\ProtonTest\spec\screenshot\backup_firebird.png" afterPath="" />
       <change type="DELETED" beforePath="C:\Users\kisiel\Desktop\ProtonTest\spec\screenshot\file.png" afterPath="" />
@@ -873,7 +870,13 @@
       <option name="project" value="LOCAL" />
       <updated>1442762453673</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="licenses to proton">
+      <created>1442762643178</created>
+      <option name="number" value="00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1442762643178</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TodoView">
@@ -944,7 +947,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="false" />
-    <MESSAGE value="add stdout to backtricks" />
     <MESSAGE value="remove 'commands result'" />
     <MESSAGE value="change path in setup_upload" />
     <MESSAGE value="remove comments" />
@@ -969,7 +971,8 @@
     <MESSAGE value="change hostname in Win8.1" />
     <MESSAGE value="add create account proton-provision" />
     <MESSAGE value="puts current server drb" />
-    <option name="LAST_COMMIT_MESSAGE" value="puts current server drb" />
+    <MESSAGE value="licenses to proton" />
+    <option name="LAST_COMMIT_MESSAGE" value="licenses to proton" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

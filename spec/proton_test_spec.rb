@@ -13,7 +13,7 @@ Capybara.javascript_driver = :poltergeist
 describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
    #before(:each) do
 
-     #@account=Account.new().create!
+     $account=Account.new().create!
 
    #end
 
@@ -24,9 +24,9 @@ describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
   # end
   it 'should correct configuration firebird' do
 
-    @account=Account.new().create!
+    #$account=Account.new().create!
 
-    @key = @account.activation_key
+    @key = $account.activation_key
 
     cb = Capybara
 
@@ -58,7 +58,6 @@ describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
     cb.page.find('div.button-group > button.btn-primary.btn').click
     cb.page.find('div.panel-text > button.btn-primary.btn').click
     sleep 13
-    #page.driver.render('./screenshot/firebird_wizard.png', :full => true)
     cb.page.find('#initial-wizard-setup-wizard-data-config-encryption-generate-understand').click
     cb.page.find('#initial-wizard-setup-wizard-data-config-encryption-generate-accepted').click
     cb.page.find('div.button-group > button.btn-primary.btn').click
@@ -78,8 +77,6 @@ describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
     cb.page.find('div.button-group > button.btn-primary.btn').click
     sleep 8
     puts cb.title
-    # expect(page).to have_no_content 'Error'
-    #cb.page.driver.render('./screenshot/firebird_wizard.png', :full => true)
 end
   ################backup###############################
 
@@ -138,7 +135,10 @@ end
       page.find('div.button-group > button.btn-primary.btn').click
       page.driver.render('./screenshot/firebird_restore.png', :full => true)
 
+      @id = $account.subscription_id
+      system("proton-provision destroy -i #{@id}")
     end
+
   end
    # after(:each) do
    #

@@ -13,6 +13,7 @@ describe 'Restoring from a backup made using proton red', :type => :feature, :js
 
     page.find('button.btn-default.btn').click
     page.find('div.button-group > button.btn-primary.btn').click
+    sleep 5
     # page.find('panel-body').text
     #  fill_in 'main-view-restore-wizard-data-config-tools-gbak-path',               :with => 'C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe'
     #  expect(page).to have_field('main-view-restore-wizard-data-config-tools-gbak-path', with: 'C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe')

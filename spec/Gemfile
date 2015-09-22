@@ -13,6 +13,9 @@ group :test do
   gem 'poltergeist'
   gem 'selenium-webdriver'
   gem 'nokogiri'
+  #gem 'chromedriver-helper'  # for Chrome <= 28
+  #gem 'chromedriver2-helper' # for Chrome >= 29
+  gem 'selenium-webdriver'
 end
 
 

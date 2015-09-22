@@ -28,7 +28,7 @@ describe 'Restoring from a backup made using proton red', :type => :feature, :js
     page.find('div.col-sm-7 > button.btn-primary.btn').click
     page.find('#main-view-restore-wizard-accepted').click
     page.find('label > span').click
-    attach_file('file', 'C:\\Users\\kisiel\\Desktop\\sec_key\\plik_ratunkowy_0.9.7.prcv')
+    attach_file('file', 'C:\\Users\\kisiel\\Downloads\\plik-ratunkowy.prcv')
 
     sleep(inspection_time=8)
     page.find('#main-view-restore-wizard-accepted').click

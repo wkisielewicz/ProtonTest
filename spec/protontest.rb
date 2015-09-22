@@ -1,6 +1,7 @@
 require 'provision'
 require 'openssl'
 require 'edn'
+
 class Account
   attr_accessor :user_email
   attr_accessor :admin_email

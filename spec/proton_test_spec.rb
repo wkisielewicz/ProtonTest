@@ -8,12 +8,14 @@ require 'capybara/poltergeist'
 require 'selenium-webdriver'
 require 'capybara/dsl'
 
+Capybara.javascript_driver = :poltergeist
+
 describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
-  before(:each) do
+   #before(:each) do
 
-    @account=Account.new().create!
+     #@account=Account.new().create!
 
-  end
+   #end
 
   # after(:each) do
   #
@@ -21,6 +23,8 @@ describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
   #   system("proton-provision destroy -i #{@id}")
   # end
   it 'should correct configuration firebird' do
+
+    @account=Account.new().create!
 
     @key = @account.activation_key
 
@@ -42,11 +46,11 @@ describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
 
     cb.visit('http://localhost:10555/')
 
-    #initial proton, setup acces key
+    #initial proton, setup access key
     cb.page.find('div.col-sm-7 > button.btn-primary.btn').click
     fill_in 'initial-wizard-setup-wizard-data-user-access-token', :with =>  @key
     cb.page.find('div.button-group > button.btn-primary.btn').click
-    sleep 5
+    sleep 8
     cb.page.find('div.button-group > button.btn-primary.btn').click
     #enter the password for the file rescue
     fill_in 'initial-wizard-setup-wizard-data-config-encryption-passphrase1', :with => 'test'
@@ -70,57 +74,77 @@ describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
     fill_in 'initial-wizard-setup-wizard-data-config-database-password', :with => 'masterkey'
     ## page.find('div.col-sm-7 > button.btn-primary.btn').click
     cb.page.find('div.button-group > button.btn-primary.btn').click
+    sleep 3
     cb.page.find('div.button-group > button.btn-primary.btn').click
     sleep 8
+    puts cb.title
     # expect(page).to have_no_content 'Error'
     #cb.page.driver.render('./screenshot/firebird_wizard.png', :full => true)
-
+end
   ################backup###############################
-  visit('http://localhost:10555/')
-  #cb.page.find(:class,'fa fa-upload').click
-  cb.page.find('button.btn-default.btn').click
-  sleep 8
-  expect(page).to have_content 'wykonywanie'
-  #cb.page.driver.render('./screenshot/backup_firebird.png', :full => true)
 
-  #######################restore#######################
-  cb.page.find('button.btn-default.btn').click
-  cb.page.find('div.button-group > button.btn-primary.btn').click
-  sleep 5
-  # page.find('panel-body').text
-  #  fill_in 'main-view-restore-wizard-data-config-tools-gbak-path',               :with => 'C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe'
-  #  expect(page).to have_field('main-view-restore-wizard-data-config-tools-gbak-path', with: 'C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe')
-  #  fill_in 'main-view-restore-wizard-data-config-tools-isql-path',               :with => 'C:\Program Files\Firebird\Firebird_2_5\bin\isql.exe'
-  fill_in 'main-view-restore-wizard-data-config-database-connection-string', :with => 'C:\Program Files (x86)\Firebird\Firebird_2_5\examples\empbuild\EMPLOYEE.FDB'
-  fill_in 'main-view-restore-wizard-data-config-database-login', :with => 'SYSDBA'
-  fill_in 'main-view-restore-wizard-data-config-database-password', :with => 'masterkey'
-  cb.page.find('div.col-sm-7 > button.btn-primary.btn').click
-  #
-  fill_in 'main-view-restore-wizard-data-config-passphrase1', :with => 'test'
-  fill_in 'main-view-restore-wizard-data-config-passphrase2', :with => 'test'
-  cb.page.find('div.col-sm-7 > button.btn-primary.btn').click
-  cb.page.find('#main-view-restore-wizard-accepted').click
-  cb.page.find('label > span').click
-  sleep 3
-  attach_file('file', 'C:\\Users\\kisiel\\Downloads\\plik-ratunkowy.prcv')
+    Capybara.javascript_driver = :poltergeist
 
-  sleep(inspection_time=8)
-  cb.page.find('#main-view-restore-wizard-accepted').click
-  sleep(inspection_time=5)
 
-  cb.page.find('div.button-group > button.btn-primary.btn').click
-  cb.page.find('div.button-group > button.btn-primary.btn').click
-  cb.page.find('div.button-group > button.btn-primary.btn').click
-  cb.page.find('div.button-group > button.btn-primary.btn').click
-  #page.driver.render('./screenshot/firebird_restore.png', :full => true)
+    describe 'performing backup database firebird', :type => :feature, :js => true do
 
-    after(:each) do
 
-      @id = @account.subscription_id
-      system("proton-provision destroy -i #{@id}")
+      it 'make a correct copy of the data for the database firebird' do
+        visit('http://localhost:10555')
+        page.first('button.btn-primary.btn').click
+        sleep 8
+        expect(page).to have_content 'wykonywanie'
+        page.driver.render('./screenshot/backup_firebird.png', :full => true)
+      end
     end
 
+
+  #######################restore#######################
+
+  Capybara.javascript_driver = :poltergeist
+
+  describe 'Restoring from a backup made using proton red', :type => :feature, :js => true do
+
+    it 'Proper restoration for a database firebird' do
+
+      visit('http://localhost:10555/')
+
+      page.find('button.btn-default.btn').click
+      sleep 4
+      page.find('div.button-group > button.btn-primary.btn').click
+      sleep 10
+      #  fill_in 'main-view-restore-wizard-data-config-tools-gbak-path',               :with => 'C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe'
+      #  expect(page).to have_field('main-view-restore-wizard-data-config-tools-gbak-path', with: 'C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe')
+      #  fill_in 'main-view-restore-wizard-data-config-tools-isql-path',               :with => 'C:\Program Files\Firebird\Firebird_2_5\bin\isql.exe'
+      fill_in 'main-view-restore-wizard-data-config-database-connection-string', :with => 'C:\Program Files (x86)\Firebird\Firebird_2_5\examples\empbuild\EMPLOYEE.FDB'
+      fill_in 'main-view-restore-wizard-data-config-database-login', :with => 'SYSDBA'
+      fill_in 'main-view-restore-wizard-data-config-database-password', :with => 'masterkey'
+      page.find('div.col-sm-7 > button.btn-primary.btn').click
+      #
+      fill_in 'main-view-restore-wizard-data-config-passphrase1', :with => 'test'
+      fill_in 'main-view-restore-wizard-data-config-passphrase2', :with => 'test'
+      page.find('div.col-sm-7 > button.btn-primary.btn').click
+      page.find('#main-view-restore-wizard-accepted').click
+      page.find('label > span').click
+      attach_file('file', 'C:\\Users\\kisiel\\Downloads\\plik-ratunkowy.prcv')
+
+      sleep(inspection_time=8)
+      page.find('#main-view-restore-wizard-accepted').click
+      sleep(inspection_time=5)
+
+      page.find('div.button-group > button.btn-primary.btn').click
+      page.find('div.button-group > button.btn-primary.btn').click
+      page.find('div.button-group > button.btn-primary.btn').click
+      page.find('div.button-group > button.btn-primary.btn').click
+      page.driver.render('./screenshot/firebird_restore.png', :full => true)
+
+    end
   end
+   # after(:each) do
+   #
+   #   @id = @account.subscription_id
+   #   system("proton-provision destroy -i #{@id}")
+   # end
 end
 
 

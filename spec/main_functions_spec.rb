@@ -17,14 +17,7 @@ describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
 
    #end
 
-  # after(:each) do
-  #
-  #   @id = @account.subscription_id
-  #   system("proton-provision destroy -i #{@id}")
-  # end
   it 'should correct configuration firebird' do
-
-    #$account=Account.new().create!
 
     @key = $account.activation_key
 
@@ -33,7 +26,7 @@ describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
     cb.register_driver :my_firefox_driver do |app|
       profile = Selenium::WebDriver::Firefox::Profile.new
       profile['browser.download.dir'] = "~/Downloads"
-      profile['browser.download.folderList'] = 2
+      profile['browser.download.folderList'] = 2  #2-the last folder specified for a download
       profile['browser.helperApps.alwaysAsk.force'] = false
       profile['browser.download.manager.showWhenStarting'] = false
       profile['browser.helperApps.neverAsk.saveToDisk'] = 'application/octet-stream'
@@ -65,13 +58,12 @@ describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
     #typing paths to the database tools firebird
     # fill_in 'config-tools-gbak-path', :with => 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gbak.exe'
     # fill_in 'config-tools-isql-path', :with => 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\isql.exe'
-    # expect(page).to have_field('config-tools-gbak-path', with: 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gbak.exe')
-    # expect(page).to have_field('config-tools-isql-path', with: 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\isql.exe')
-    #cb.page.driver.render('./screenshot/firebird_wizard1.png', :full => true)
+    expect(page).to have_field('config-tools-gbak-path', with: 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gbak.exe')
+    expect(page).to have_field('config-tools-isql-path', with: 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\isql.exe')
+
     fill_in 'initial-wizard-setup-wizard-data-config-database-connection-string', :with => 'C:\Program Files (x86)\Firebird\Firebird_2_5\examples\empbuild\EMPLOYEE.FDB'
     fill_in 'initial-wizard-setup-wizard-data-config-database-login', :with => 'SYSDBA'
     fill_in 'initial-wizard-setup-wizard-data-config-database-password', :with => 'masterkey'
-    ## page.find('div.col-sm-7 > button.btn-primary.btn').click
     cb.page.find('div.button-group > button.btn-primary.btn').click
     sleep 3
     cb.page.find('div.button-group > button.btn-primary.btn').click
@@ -110,9 +102,8 @@ end
       sleep 4
       page.find('div.button-group > button.btn-primary.btn').click
       sleep 10
-      #  fill_in 'main-view-restore-wizard-data-config-tools-gbak-path',               :with => 'C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe'
-      #  expect(page).to have_field('main-view-restore-wizard-data-config-tools-gbak-path', with: 'C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe')
-      #  fill_in 'main-view-restore-wizard-data-config-tools-isql-path',               :with => 'C:\Program Files\Firebird\Firebird_2_5\bin\isql.exe'
+      #expect(page).to have_field('config-tools-gbak-path', with: 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gbak.exe')
+      #expect(page).to have_field('config-tools-isql-path', with: 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\isql.exe')
       fill_in 'main-view-restore-wizard-data-config-database-connection-string', :with => 'C:\Program Files (x86)\Firebird\Firebird_2_5\examples\empbuild\EMPLOYEE.FDB'
       fill_in 'main-view-restore-wizard-data-config-database-login', :with => 'SYSDBA'
       fill_in 'main-view-restore-wizard-data-config-database-password', :with => 'masterkey'
@@ -140,13 +131,13 @@ end
     end
 
   end
-   # after(:each) do
-   #
-   #   @id = @account.subscription_id
-   #   system("proton-provision destroy -i #{@id}")
-   # end
 end
 
 
 
-
+##########################################
+# after(:each) do
+#
+#   @id = @account.subscription_id
+#   system("proton-provision destroy -i #{@id}")
+# end

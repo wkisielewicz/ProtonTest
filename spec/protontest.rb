@@ -14,11 +14,12 @@ class Account
     @user_email = 'wkisielewicz@criticue.com'
     @admin_email = 'wkisielewicz@criticue.com'
     @license = 'spec\licenses\FB-S.edn'
-    @friendly_name = 'test'
+    @friendly_name = 'wioletta_automate_test'
   end
 
+
   def create!
-    ProtonApi::Subscription.create!(@user_email, @admin_email, EDN.read(File.read(@license)), @friendly_name)
+    ProtonApi::Subscription.create!(@user_email, @admin_email, EDN.read(File.read(@license)), @friendly_name, @options)
   end
 
   def destroy!
@@ -27,3 +28,21 @@ class Account
     system("proton-provision destroy -i #{@id}")
   end
 end
+
+class Firebird_Variables
+
+  attr_accessor :gbak_path, :isql_path, :full_path, :login, :password_firebird_database, :wrong_password, :security_password
+
+  def initialize (gbak_path, isql_path, full_path, login, password, wrong_password,security_password)
+    @gbak_path = 'C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe'
+    @isql_path = 'C:\Program Files\Firebird\Firebird_2_5\bin\isql.exe'
+    @full_path= 'C:\Program Files\Firebird\Firebird_2_5\examples\empbuild\EMPLOYEE.FDB'
+    @login='SYSDBA'
+    @password_firebird_database= 'masterkey'
+    @wrong_password='pass'
+    @security_password='test'
+
+  end
+
+end
+

@@ -9,17 +9,19 @@ require 'selenium-webdriver'
 require 'capybara/dsl'
 
 describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
+
+  let(:fb) {Firebird_Variables.new(:gbak_path,:isql_path,:full_path,:login,:password,:wrong_password,:security_password)}
   before(:each) do
 
     @account=Account.new().create!
 
   end
 
-   # after(:each) do
-   #
-   #   @id = @account.subscription_id
-   #   system("proton-provision destroy -i #{@id}")
-   # end
+  # after(:each) do
+  #
+  #   @id = @account.subscription_id
+  #   system("proton-provision destroy -i #{@id}")
+  # end
   it 'should correct configuration firebird' do
 
     @key = @account.activation_key
@@ -44,13 +46,13 @@ describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
 
     #initial proton, setup acces key
     cb.page.find('div.col-sm-7 > button.btn-primary.btn').click
-    fill_in 'initial-wizard-setup-wizard-data-user-access-token', :with =>  @key
+    fill_in 'initial-wizard-setup-wizard-data-user-access-token', :with => @key
     cb.page.find('div.button-group > button.btn-primary.btn').click
     sleep 5
     cb.page.find('div.button-group > button.btn-primary.btn').click
     #enter the password for the file rescue
-    fill_in 'initial-wizard-setup-wizard-data-config-encryption-passphrase1', :with => 'test'
-    fill_in 'initial-wizard-setup-wizard-data-config-encryption-passphrase2', :with => 'test'
+    fill_in 'initial-wizard-setup-wizard-data-config-encryption-passphrase1', with: fb.security_password
+    fill_in 'initial-wizard-setup-wizard-data-config-encryption-passphrase2', with: fb.security_password
     cb.page.find('div.button-group > button.btn-primary.btn').click
     cb.page.find('div.panel-text > button.btn-primary.btn').click
     sleep 13
@@ -60,14 +62,14 @@ describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
     cb.page.find('div.button-group > button.btn-primary.btn').click
     sleep 5
     #typing paths to the database tools firebird
-    # fill_in 'config-tools-gbak-path', :with => 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gbak.exe'
-    # fill_in 'config-tools-isql-path', :with => 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\isql.exe'
-    # expect(page).to have_field('config-tools-gbak-path', with: 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\gbak.exe')
-    # expect(page).to have_field('config-tools-isql-path', with: 'C:\Program Files (x86)\Firebird\Firebird_2_5\bin\isql.exe')
+    # fill_in 'config-tools-gbak-path', with: 'fb.gbak_path
+    # fill_in 'config-tools-isql-path', with: fb.isql_path
+    # expect(page).to have_field('config-tools-gbak-path', with: fb.gbak_path
+    # expect(page).to have_field('config-tools-isql-path', with: fb.isql_path
     #cb.page.driver.render('./screenshot/firebird_wizard1.png', :full => true)
-    fill_in 'initial-wizard-setup-wizard-data-config-database-connection-string', :with => 'C:\Program Files (x86)\Firebird\Firebird_2_5\examples\empbuild\EMPLOYEE.FDB'
-    fill_in 'initial-wizard-setup-wizard-data-config-database-login', :with => 'SYSDBA'
-    fill_in 'initial-wizard-setup-wizard-data-config-database-password', :with => 'masterkey'
+    fill_in 'initial-wizard-setup-wizard-data-config-database-connection-string', with: fb.full_path
+    fill_in 'initial-wizard-setup-wizard-data-config-database-login', with: fb.login
+    fill_in 'initial-wizard-setup-wizard-data-config-database-password', with: fb.password
     ## page.find('div.col-sm-7 > button.btn-primary.btn').click
     cb.page.find('div.button-group > button.btn-primary.btn').click
     cb.page.find('div.button-group > button.btn-primary.btn').click

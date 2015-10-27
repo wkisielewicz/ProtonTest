@@ -8,7 +8,7 @@ Capybara.javascript_driver = :poltergeist
 
 describe 'Restoring from a backup made using proton red', :type => :feature, :js => true do
 
-  let(:fb) {Firebird_Variables.new(:gbak_path,:isql_path,:full_path,:login,:password,:wrong_password,:security_password)}
+  let(:fb) {Firebird_Variables.new(:gbak_path,:isql_path,:full_path,:login,:password_firebird_database,:wrong_password,:security_password)}
 
   it 'Proper restoration for a database firebird' do
 
@@ -23,7 +23,7 @@ describe 'Restoring from a backup made using proton red', :type => :feature, :js
     #  fill_in 'main-view-restore-wizard-data-config-tools-isql-path',               :with => 'C:\Program Files\Firebird\Firebird_2_5\bin\isql.exe'
     fill_in 'main-view-restore-wizard-data-config-database-connection-string', with: fb.full_path
     fill_in 'main-view-restore-wizard-data-config-database-login', with: fb.login
-    fill_in 'main-view-restore-wizard-data-config-database-password', with: fb.password
+    fill_in 'main-view-restore-wizard-data-config-database-password', with: fb.password_firebird_database
     page.find('div.col-sm-7 > button.btn-primary.btn').click
 
     #

@@ -1,3 +1,6 @@
 /install
 /screenshot
+/spec/screenshot
 doctor.rb
+/example_spec
+/example_spec/example_download_spec.rb

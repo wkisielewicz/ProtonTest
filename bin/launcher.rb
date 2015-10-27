@@ -188,12 +188,6 @@ class RemoteTestSuite
   end
 
 
-# Main TODO
-# - Refactor code (w/ m¹dry i sympatyczny Marcin).
-# - sprawdzanie czy dzia³a server za pomoc¹ DRB
-# - komentarze(cel dzia³ania, jak)
-# - zmiana nazw
-
 #Setup all method necessary for testing
   def run_all_test_dependency
     copy_proton_exe(@test_vm.install_dir)

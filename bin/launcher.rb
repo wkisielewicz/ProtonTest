@@ -15,7 +15,7 @@ MACHINES = [
                #initial_snapshot: 'test_firebird_2_0_serverjs',
                initial_snapshot: 'test_2_5',
                #hostname: '192.168.0.113',
-               hostname: '10.26.14.23',
+               hostname: '192.168.1.105',
                username: 'IEUser',
                password: 'Passw0rd!',
                install_dir: 'C:\\ProtonTest',
@@ -62,7 +62,7 @@ MACHINES = [
 
 MOTHER = {#hostname: '10.26.14.13',
           # hostname: '192.168.0.101',
-          hostname: '10.26.14.14',
+          hostname: '192.168.1.113',
           username: 'kisiel',
           password: 'qE2y2Uc9Gz'}
 
@@ -100,7 +100,7 @@ end
 class TestMachine < RemoteMachine
   def initialize(mother, config)
     @mother = mother
-    super(config)  #Super wywo³uje metodê rodzica o tej samej nazwie, z tymi samymi argumentami.
+    super(config)  #Super wywoï¿½uje metodï¿½ rodzica o tej samej nazwie, z tymi samymi argumentami.
                   # Jest to bardzo przydatne do wykorzystania na odziedziczonych klasach.
   end
 
@@ -262,7 +262,7 @@ class FileTransfer
   end
 end
 
-DRb.start_service("druby://10.26.14.15:0") # TODO: Detect ip.
+DRb.start_service("druby://192.168.1.113:0") # TODO: Detect ip.
 puts DRb.current_server.uri
 
 test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config)}

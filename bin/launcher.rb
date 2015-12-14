@@ -11,11 +11,11 @@ require 'io/wait'
 
 #Access data defining attributes for each virtual machine
 MACHINES = [
-      {vm: 'Win8.1',
+      {vm: 'Win8.1_Test_Firendly_name',
                #initial_snapshot: 'test_firebird_2_0_serverjs',
-               initial_snapshot: 'test_2_5',
+               initial_snapshot: 'firebird_2_5_serverjs',
                #hostname: '192.168.0.113',
-               hostname: '192.168.1.105',
+               hostname: '192.168.1.111',
                username: 'IEUser',
                password: 'Passw0rd!',
                install_dir: 'C:\\ProtonTest',
@@ -62,9 +62,9 @@ MACHINES = [
 
 MOTHER = {#hostname: '10.26.14.13',
           # hostname: '192.168.0.101',
-          hostname: '192.168.1.113',
+          hostname: '192.168.1.101',
           username: 'kisiel',
-          password: 'qE2y2Uc9Gz'}
+          password: ''}
 
 # A remote machine, define ssh, raise exception when commands failed
 class RemoteMachine < OpenStruct

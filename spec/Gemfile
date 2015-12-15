@@ -5,7 +5,7 @@ source 'https://rubygems.org'
  # gem 'rspec-rails', '< 3.0.0'
 #end
 
-gem 'ssh-exec'
+
 
 gem 'rspec', group: [:test, :development]
 group :test do
@@ -16,6 +16,8 @@ group :test do
   #gem 'chromedriver-helper'  # for Chrome <= 28
   #gem 'chromedriver2-helper' # for Chrome >= 29
   gem 'selenium-webdriver'
+  gem 'net-ssh',' ~> 2.0'
+  gem 'ssh-exec', '~>0.1.1'
 end
 
 

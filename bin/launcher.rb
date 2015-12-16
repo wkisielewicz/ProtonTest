@@ -14,8 +14,7 @@ MACHINES = [
       {vm: 'Win8.1_Test_Firendly_name',
                #initial_snapshot: 'test_firebird_2_0_serverjs',
                initial_snapshot: 'firebird_2_5_serverjs',
-               #hostname: '192.168.0.113',
-               hostname: '192.168.1.111',
+               hostname: '192.168.1.106',
                username: 'IEUser',
                password: 'Passw0rd!',
                install_dir: 'C:\\ProtonTest',
@@ -62,9 +61,9 @@ MACHINES = [
 
 MOTHER = {#hostname: '10.26.14.13',
           # hostname: '192.168.0.101',
-          hostname: '192.168.1.101',
+          hostname: '192.168.1.102',
           username: 'kisiel',
-          password: ''}
+          password: 'trichlorekpotasu23-45'}
 
 # A remote machine, define ssh, raise exception when commands failed
 class RemoteMachine < OpenStruct
@@ -212,7 +211,7 @@ class RemoteTestSuite
 
 #Install proton in silent mode, omission windows during installation
   def install_proton
-    @server.exec(" #{@test_vm.install_dir}\\install\\Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
+    @server.exec(" '#{@test_vm.install_dir}\\install\\Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT'")
   end
 
 #Copy specs from install dir(base_dir), and throwing to the target folder.Omission folder - copying only the files using File.file?()
@@ -267,7 +266,7 @@ puts DRb.current_server.uri
 
 test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config)}
 test = RemoteTestSuite.new(test_machines[0])
-#test.copy_proton_exe("C:\\__ProtonTest")
+# test.copy_proton_exe("C:\\ProtonTest")
 test.run!
 exit
 

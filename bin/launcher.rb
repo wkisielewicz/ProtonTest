@@ -11,57 +11,57 @@ require 'io/wait'
 
 #Access data defining attributes for each virtual machine
 MACHINES = [
-      {vm: 'Win8.1_Test_Firendly_name',
-               #initial_snapshot: 'test_firebird_2_0_serverjs',
-               initial_snapshot: 'firebird_2_5_serverjs',
-               hostname: '192.168.1.106',
-               username: 'IEUser',
-               password: 'Passw0rd!',
-               install_dir: 'C:\\ProtonTest',
-               spec_dir: 'C:\\ProtonTest'}]
-    # {vm: 'Vista', <-- no active
-    #         initial_snapshot: 'test_firebird_2_5',
-    #         hostname:  '192.168.0.119',
-    #         username: 'IEUser',
-    #         password: 'Passw0rd!',
-    #         install_dir: 'C:\\ProtonTest',
-    #         spec_dir: 'C:\\ProtonTest'}
-    #  {vm: 'Win8',
-    #          initial_snapshot: 'test_firebird_2_5_server',
-    #          #initial_snapshot: 'test_firebird_2_0_server',
-    #          hostname:  '192.168.0.120',
-    #          username: 'IEUser',
-    #          password: 'Passw0rd!',
-    #          install_dir: 'C:\\ProtonTest',
-    #          spec_dir: 'C:\\ProtonTest'}
-    # {vm: 'WindowsServer2012',
-    #         initial_snapshot: 'test_firebird_2_5_serverjs',
-    #         #initial_snapshot: 'test_firebird_2_0_serverjs',
-    #         hostname:  '192.168.0.117',
-    #         username: 'winserver',
-    #         password: 'Passw0rd!',
-    #         install_dir: 'C:\\ProtonTest',
-    #         spec_dir: 'C:\\ProtonTest' }
-    # {vm: 'WinServer2008',
-    #         initial_snapshot: 'test_firebird_2_5',
-    #         hostname:  '192.168.0.121',
-    #         username: 'Administrator',
-    #         password: 'Passw0rd!',
-    #         install_dir: 'C:\\ProtonTest',
-    #         spec_dir: 'C:\\ProtonTest'}
+    {vm: 'Win8.1_server',
+     #initial_snapshot: 'test_firebird_2_0_serverjs',
+     initial_snapshot: 'firebird_2_5_server',
+     hostname: '192.168.1.112',
+     username: 'IEUser',
+     password: 'Passw0rd!',
+     install_dir: 'C:\\ProtonTest',
+     spec_dir: 'C:\\ProtonTest'}]
+# {vm: 'Vista', <-- no active
+#         initial_snapshot: 'test_firebird_2_5',
+#         hostname:  '192.168.0.119',
+#         username: 'IEUser',
+#         password: 'Passw0rd!',
+#         install_dir: 'C:\\ProtonTest',
+#         spec_dir: 'C:\\ProtonTest'}
+#  {vm: 'Win8',
+#          initial_snapshot: 'test_firebird_2_5_server',
+#          #initial_snapshot: 'test_firebird_2_0_server',
+#          hostname:  '192.168.0.120',
+#          username: 'IEUser',
+#          password: 'Passw0rd!',
+#          install_dir: 'C:\\ProtonTest',
+#          spec_dir: 'C:\\ProtonTest'}
+# {vm: 'WindowsServer2012',
+#         initial_snapshot: 'test_firebird_2_5_serverjs',
+#         #initial_snapshot: 'test_firebird_2_0_serverjs',
+#         hostname:  '192.168.0.117',
+#         username: 'winserver',
+#         password: 'Passw0rd!',
+#         install_dir: 'C:\\ProtonTest',
+#         spec_dir: 'C:\\ProtonTest' }
+# {vm: 'WinServer2008',
+#         initial_snapshot: 'test_firebird_2_5',
+#         hostname:  '192.168.0.121',
+#         username: 'Administrator',
+#         password: 'Passw0rd!',
+#         install_dir: 'C:\\ProtonTest',
+#         spec_dir: 'C:\\ProtonTest'}
 
-    # {vm: 'Win7', <--no active
-    #  initial_snapshot: 'firebird_2_0_server',
-    #  hostname: '192.168.0.111',
-    #  #hostname: '10.26.14.20',
-    #  username: 'IEUser',
-    #  password: 'Passw0rd!',
-    #  install_dir: 'C:\\ProtonTest',
-    #  spec_dir: 'C:\\ProtonTest'}]
+# {vm: 'Win7', <--no active
+#  initial_snapshot: 'firebird_2_0_server',
+#  hostname: '192.168.0.111',
+#  #hostname: '10.26.14.20',
+#  username: 'IEUser',
+#  password: 'Passw0rd!',
+#  install_dir: 'C:\\ProtonTest',
+#  spec_dir: 'C:\\ProtonTest'}]
 
 MOTHER = {#hostname: '10.26.14.13',
           # hostname: '192.168.0.101',
-          hostname: '192.168.1.102',
+          hostname: '192.168.1.103',
           username: 'kisiel',
           password: 'trichlorekpotasu23-45'}
 
@@ -100,7 +100,7 @@ class TestMachine < RemoteMachine
   def initialize(mother, config)
     @mother = mother
     super(config)  #Super wywo�uje metod� rodzica o tej samej nazwie, z tymi samymi argumentami.
-                  # Jest to bardzo przydatne do wykorzystania na odziedziczonych klasach.
+    # Jest to bardzo przydatne do wykorzystania na odziedziczonych klasach.
   end
 
 #Load a clean snapshot and its start
@@ -125,7 +125,7 @@ class TestMachine < RemoteMachine
     @mother.ssh!("VBoxManage snapshot #{self.vm} take #{snapshot_name}")
   end
 
-  # protected
+# protected
 
 #Stop if target machine is running
   def clear
@@ -152,9 +152,9 @@ class TestMachine < RemoteMachine
     Timeout::timeout(wait) do
       while true
         # ignore_exceptions do
-          puts "wait"
-          return if server.ready?
-          sleep(1)
+        puts "wait"
+        return if server.ready?
+        sleep(1)
         # end
       end
     end
@@ -211,7 +211,7 @@ class RemoteTestSuite
 
 #Install proton in silent mode, omission windows during installation
   def install_proton
-    @server.exec(" '#{@test_vm.install_dir}\\install\\Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT'")
+    @server.exec(" #{@test_vm.install_dir}\\install\\Proton+Red+Setup.exe /SP- /NORESTART /VERYSILENT")
   end
 
 #Copy specs from install dir(base_dir), and throwing to the target folder.Omission folder - copying only the files using File.file?()
@@ -261,7 +261,7 @@ class FileTransfer
   end
 end
 
-DRb.start_service("druby://192.168.1.113:0") # TODO: Detect ip.
+DRb.start_service("druby://192.168.1.105:0") # TODO: Detect ip.
 puts DRb.current_server.uri
 
 test_machines = MACHINES.map { |config| TestMachine.new(RemoteMachine.new(MOTHER), config)}

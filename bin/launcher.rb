@@ -6,6 +6,7 @@ require 'drb/drb'
 require 'timeout'
 require 'ssh-exec'
 require 'pathname'
+require 'socket'
 require 'io/wait'
 
 
@@ -145,7 +146,7 @@ class TestMachine < RemoteMachine
     wait_for_server(wait) if wait > 0
   end
 
-  def wait_for_server(wait = 30)
+  def wait_for_server(wait = 40)
     url = "druby://#{self.hostname}:8989"
     puts "Waiting for #{url}..."
     server = DRbObject.new_with_uri(url)
@@ -261,6 +262,11 @@ class FileTransfer
   end
 end
 
+#detect ip
+# ip = Socket.gethostname
+# puts ip
+
+# DRb.start_service("#{ip}")
 DRb.start_service("druby://192.168.1.105:0") # TODO: Detect ip.
 puts DRb.current_server.uri
 

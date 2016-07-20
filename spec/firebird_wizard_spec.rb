@@ -8,7 +8,7 @@ require 'capybara/poltergeist'
 require 'selenium-webdriver'
 require 'capybara/dsl'
 
-describe 'Setting up Firebird Wizzard', :type => :feature, :js => true do
+describe 'Setting up Firebird Wizard', :type => :feature, :js => true do
 
   let(:fb) {Firebird_Variables.new(:gbak_path,:isql_path,:full_path,:login,:password,:wrong_password,:security_password)}
   before(:each) do

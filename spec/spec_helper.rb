@@ -1,6 +1,7 @@
 require 'rspec'
 require 'provision'
 require 'capybara/poltergeist'
+require 'capybara/rspec'
 
 
 Capybara.javascript_driver = :poltergeist

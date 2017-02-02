@@ -1,6 +1,4 @@
 require_relative 'spec_helper'
-require 'capybara/rspec'
-require 'capybara/poltergeist'
 
 Capybara.javascript_driver = :poltergeist
 
@@ -14,17 +12,9 @@ describe 'performing backup database firebird', :type => :feature, :js => true d
   end
 
   it 'make a correct copy of the data for the database firebird' do
-    page.find('button.btn-primary.btn').click
-    sleep 6
-    expect(page).to have_content 'wykonywanie'
+    page.find('div.small-box.bg-grey-blue.well', wait: 10).click
+    page.find('button.btn-primary.btn', wait: 6).click
+    expect(page).to have_css ('div.messenger-message.message.alert.succcess.message-success.alert-success')
     page.driver.render('./screenshot/backup_firebird.png', :full => true)
   end
 end
-
-
-
-
-
-
-
-

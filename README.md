@@ -1,5 +1,4 @@
-# Automated tests for Proton Red
-
+# UI Automated tests
 ### This system is based on the action of DRB server.
 
 ## Major dependencies 
@@ -26,7 +25,7 @@ Launcher is arranged on the build machine communicates, a server that is placed 
 
 ## Tests
 
-Tests are run by rspec, including test cases for major functionality Proton Red.
+Tests are run by rspec, including test cases for major functionality of the application.
            
       
      

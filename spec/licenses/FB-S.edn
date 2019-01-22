@@ -1,3 +1,4 @@
 {:databases      [:firebird]
  :max-total-size 102400                                     ; MB
  :desc           "FB-S"}
+// firebird

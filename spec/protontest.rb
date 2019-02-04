@@ -11,8 +11,8 @@ class Account
   attr_accessor :key
 
   def initialize
-    @user_email = 'wkisielewicz@criticue.com'
-    @admin_email = 'wkisielewicz@criticue.com'
+    @user_email = 'mymail'
+    @admin_email = 'usermail'
     @license = 'spec\licenses\FB-S.edn'
     @friendly_name = 'wioletta_automate_test'
   end
@@ -23,8 +23,8 @@ class Account
   end
 
   def destroy!
-    # @id = @a.subscription_id
-    # ProtonApi::Subscription.find("puri::subscription:#{@id}").destroy!
+     @id = @a.subscription_id
+     ProtonApi::Subscription.find("puri::subscription:#{@id}").destroy!
     system("proton-provision destroy -i #{@id}")
   end
 end
@@ -37,6 +37,8 @@ class Firebird_Variables
     @gbak_path = 'C:\Program Files\Firebird\Firebird_2_5\bin\gbak.exe'
     @isql_path = 'C:\Program Files\Firebird\Firebird_2_5\bin\isql.exe'
     @full_path= 'C:\Program Files\Firebird\Firebird_2_5\examples\empbuild\EMPLOYEE.FDB'
+    
+    #using default Firebird login
     @login='SYSDBA'
     @password_firebird_database= 'masterkey'
     @wrong_password='pass'
